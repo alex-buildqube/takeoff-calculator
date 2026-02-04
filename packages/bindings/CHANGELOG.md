@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 1.2.6
+
+### Patch Changes
+
+- d7f2998: Added back prepublish without github release
+
 ## 1.2.5
 
 ### Patch Changes
