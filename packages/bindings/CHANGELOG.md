@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 1.2.1
+
+### Patch Changes
+
+- 2591d49: Force push
+
 ## 1.2.0
 
 ### Minor Changes
