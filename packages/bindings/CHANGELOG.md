@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 1.2.5
+
+### Patch Changes
+
+- d94f78a: Update Publish deps
+
 ## 1.2.4
 
 ### Patch Changes
