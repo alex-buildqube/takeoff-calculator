@@ -1,23 +1,12 @@
-use std::collections::HashMap;
-
+use crate::measurement::MeasurementWrapper;
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
-
-use crate::group::Group;
-use crate::measurement::Measurement;
-use crate::measurement::MeasurementWrapper;
-use crate::page::Page;
-use crate::scale::Scale;
-
-#[napi(object)]
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct StateOptions {
-  pub pages: Vec<Page>,
-  pub groups: Vec<Group>,
-  pub measurements: Vec<Measurement>,
-  pub scales: Vec<Scale>,
-}
-
+use std::collections::HashMap;
+use takeoff_core::group::Group;
+use takeoff_core::measurement::Measurement;
+use takeoff_core::page::Page;
+use takeoff_core::scale::Scale;
+use takeoff_core::state::StateOptions;
 #[napi]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct State {
@@ -183,11 +172,11 @@ impl State {
 #[cfg(test)]
 mod tests {
   use super::*;
-  use crate::coords::Point;
-  use crate::measurement::Measurement::*;
-  use crate::scale::Scale::*;
-  use crate::scale::ScaleDefinition;
-  use crate::unit::Unit;
+  use takeoff_core::coords::Point;
+  use takeoff_core::measurement::Measurement::*;
+  use takeoff_core::scale::Scale::*;
+  use takeoff_core::scale::ScaleDefinition;
+  use takeoff_core::unit::Unit;
 
   #[test]
   fn test_find_measurement_scale() {

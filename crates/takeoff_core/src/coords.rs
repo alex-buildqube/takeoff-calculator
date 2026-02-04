@@ -1,4 +1,4 @@
-use geo::{coord, Coord, Point as GeoPoint};
+use geo::{Coord, Point as GeoPoint, coord};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 

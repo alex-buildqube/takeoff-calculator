@@ -1,11 +1,8 @@
-
 [package]
-edition = "2021"
-name = "takeoff_calculator"
+name = "takeoff_core"
 version = "0.1.0"
+edition = "2024"
 
-[lib]
-crate-type = ["cdylib"]
 
 [dependencies]
 napi = { workspace = true }
@@ -14,12 +11,3 @@ uom = { workspace = true }
 geo = { workspace = true }
 serde = { workspace = true }
 uuid = { workspace = true }
-takeoff_core = { workspace = true }
-
-[build-dependencies]
-napi-build = "2"
-
-[profile.release]
-lto = true
-codegen-units = 1
-strip = "symbols"
