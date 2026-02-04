@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 1.2.2
+
+### Patch Changes
+
+- 2f3d362: Remove unused function
+
 ## 1.2.1
 
 ### Patch Changes
