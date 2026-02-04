@@ -1,5 +1,3 @@
-use crate::coords::Point;
-use crate::unit::Unit;
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 

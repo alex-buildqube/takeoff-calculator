@@ -1,7 +1,5 @@
 use crate::coords::Point;
-use geo::{
-  Area, Coord, CoordsIter, Geometry, LineString, Point as GeoPoint, Polygon as GeoPolygon, Rect,
-};
+use geo::{Area, Coord, CoordsIter, Geometry, LineString, Polygon as GeoPolygon, Rect};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 
@@ -94,16 +92,6 @@ impl Measurement {
     }
   }
 
-  /// Get the points of the measurement
-  //   pub fn points(&self) -> Vec<Point> {
-  //     match self {
-  //       Measurement::Count { points, .. } => vec![points.0],
-  //       Measurement::Polygon { points, .. } => points.clone(),
-  //       Measurement::Polyline { points, .. } => points.clone(),
-  //       Measurement::Rectangle { points, .. } => vec![points.0, points.1],
-  //     }
-  //   }
-
   /// Convert the measurement to a polygon
   pub fn to_polygon(&self) -> Option<GeoPolygon<f64>> {
     match self {
@@ -134,10 +122,10 @@ impl Measurement {
 
   pub fn to_point(&self) -> Point {
     match self {
-      Measurement::Count { points, .. } => points.0.into(),
-      Measurement::Polygon { points, .. } => points.first().unwrap().clone(),
-      Measurement::Polyline { points, .. } => points.first().unwrap().clone(),
-      Measurement::Rectangle { points, .. } => points.0.into(),
+      Measurement::Count { points, .. } => points.0,
+      Measurement::Polygon { points, .. } => *points.first().unwrap(),
+      Measurement::Polyline { points, .. } => *points.first().unwrap(),
+      Measurement::Rectangle { points, .. } => points.0,
     }
   }
 
@@ -172,10 +160,7 @@ impl Measurement {
       }
       Measurement::Rectangle { .. } => {
         let polygon = self.to_polygon().unwrap();
-        let coords: Vec<Point> = polygon
-          .exterior_coords_iter()
-          .map(|c| Point::from(c))
-          .collect();
+        let coords: Vec<Point> = polygon.exterior_coords_iter().map(Point::from).collect();
         let mut perimeter = 0.0;
         for i in 0..coords.len() {
           let j = (i + 1) % coords.len();

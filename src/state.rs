@@ -57,13 +57,12 @@ impl State {
       .map(|scale| (scale.id(), scale))
       .collect();
 
-    let res = Self {
+    Self {
       pages,
       groups,
       measurements,
       scales,
-    };
-    res
+    }
   }
 
   #[napi]
@@ -81,7 +80,7 @@ impl State {
     let measurement = self.measurements.get(&measurement_id)?;
     self
       .find_measurement_scale(&measurement.measurement)
-      .map(|scale| scale.clone())
+      .cloned()
   }
 
   fn find_measurement_scale(&self, measurement: &Measurement) -> Option<&Scale> {

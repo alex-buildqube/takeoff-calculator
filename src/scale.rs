@@ -1,7 +1,7 @@
 use crate::coords::Point;
 use crate::unit::Unit;
 use geo::Contains;
-use geo::{Area, Coord, CoordsIter, Geometry, LineString, Polygon as GeoPolygon, Rect};
+use geo::{Coord, Geometry, Polygon as GeoPolygon, Rect};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 
