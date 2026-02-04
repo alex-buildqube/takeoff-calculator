@@ -1,118 +1,31 @@
 {
-  "name": "@build-qube/takeoff-calculator",
-  "version": "1.1.1",
-  "description": "Template project for writing node package with napi-rs",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "browser": "browser.js",
-  "repository": {
-    "url": "git+ssh://git@github.com/napi-rs/package-template-pnpm.git",
-    "type": "git"
-  },
-  "license": "MIT",
-  "keywords": [
-    "napi-rs",
-    "NAPI",
-    "N-API",
-    "Rust",
-    "node-addon",
-    "node-addon-api"
-  ],
-  "files": [
-    "index.d.ts",
-    "index.js",
-    "browser.js"
-  ],
-  "napi": {
-    "binaryName": "takeoff-calculator",
-    "targets": [
-      "x86_64-apple-darwin",
-      "aarch64-apple-darwin",
-      "x86_64-unknown-linux-gnu",
-      "x86_64-pc-windows-msvc",
-      "x86_64-unknown-linux-musl",
-      "aarch64-unknown-linux-gnu",
-      "i686-pc-windows-msvc",
-      "armv7-unknown-linux-gnueabihf",
-      "aarch64-linux-android",
-      "x86_64-unknown-freebsd",
-      "aarch64-unknown-linux-musl",
-      "aarch64-pc-windows-msvc",
-      "armv7-linux-androideabi",
-      "wasm32-wasi-preview1-threads"
-    ]
-  },
-  "engines": {
-    "node": ">= 10"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
-  "scripts": {
-    "artifacts": "napi artifacts",
-    "bench": "node --import @oxc-node/core/register benchmark/bench.ts",
-    "build": "napi build --platform --release --no-const-enum",
-    "build:debug": "napi build --platform --no-const-enum",
-    "format": "run-p format:prettier format:rs format:toml",
-    "format:prettier": "prettier . -w",
-    "format:toml": "taplo format",
-    "format:rs": "cargo fmt",
-    "lint": "oxlint",
-    "prepublishOnly": "napi prepublish -t npm",
-    "test": "ava",
-    "version": "napi version"
-  },
-  "devDependencies": {
-    "@emnapi/core": "^1.5.0",
-    "@emnapi/runtime": "^1.5.0",
-    "@napi-rs/cli": "^3.2.0",
-    "@napi-rs/wasm-runtime": "^1.0.4",
-    "@oxc-node/core": "^0.0.35",
-    "@taplo/cli": "^0.7.0",
-    "@tybys/wasm-util": "^0.10.0",
-    "ava": "^6.4.1",
-    "chalk": "^5.6.2",
-    "emnapi": "^1.5.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.6",
-    "npm-run-all2": "^8.0.4",
-    "oxlint": "^1.14.0",
-    "prettier": "^3.6.2",
-    "tinybench": "^6.0.0",
-    "typescript": "^5.9.2"
-  },
-  "lint-staged": {
-    "*.@(js|ts|tsx)": [
-      "oxlint --fix"
-    ],
-    "*.@(js|ts|tsx|yml|yaml|md|json)": [
-      "prettier --write"
-    ],
-    "*.toml": [
-      "taplo format"
-    ]
-  },
-  "ava": {
-    "extensions": {
-      "ts": "module"
+    "name": "takeoff-monorepo",
+    "private": true,
+    "packageManager": "pnpm@10.24.0",
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "change": "pnpm changeset",
+        "test": "turbo run test",
+        "test:local": "turbo run test:local",
+        "test:rust": "turbo run cargo:test",
+        "test:all": "turbo run cargo:test test:local",
+        "cargo:test": "cargo test",
+        "clean": "git clean -fx",
+        "lint": "turbo run lint",
+        "format": "turbo run format format:toml format:rs format:fix",
+        "bench": "turbo run bench",
+        "format:toml": "taplo format",
+        "format:rs": "cargo fmt",
+        "format:fix": "cargo fix --allow-dirty",
+        "release": "pnpm --filter ./packages/bindings create-npm-dirs && pnpm --filter ./packages/bindings artifacts && ls -R ./packages/bindings/npm && pnpm changeset publish"
     },
-    "timeout": "2m",
-    "workerThreads": false,
-    "environmentVariables": {
-      "TS_NODE_PROJECT": "./tsconfig.json"
+    "devDependencies": {
+        "@changesets/cli": "^2.29.8",
+        "@taplo/cli": "^0.7.0",
+        "oxlint": "^1.14.0",
+        "prettier": "^3.6.2",
+        "turbo": "^2.0.0"
     },
-    "nodeArguments": [
-      "--import",
-      "@oxc-node/core/register"
-    ]
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": false,
-    "trailingComma": "all",
-    "singleQuote": true,
-    "arrowParens": "always"
-  },
-  "packageManager": "pnpm@10.28.2"
+    "version": "0.0.1"
 }

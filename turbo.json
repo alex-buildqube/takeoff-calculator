@@ -1,0 +1,59 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": [
+                "^build"
+            ],
+            "outputs": [
+                "dist/**",
+                "*.node",
+                "*.wasm",
+                "index.js",
+                "index.d.ts",
+                "browser.js"
+            ]
+        },
+        "test:local": {
+            "dependsOn": [
+                "build"
+            ],
+            "inputs": [
+                "**/*.ts",
+                "**/*.rs"
+            ]
+        },
+        "//#cargo:test": {
+            "inputs": [
+                "**/*.rs"
+            ]
+        },
+        "test": {
+            "inputs": [
+                "**/*.ts",
+                "**/*.rs"
+            ]
+        },
+        "lint": {
+            "cache": false
+        },
+        "format": {
+            "cache": false
+        },
+        "//#format:toml": {
+            "cache": false
+        },
+        "//#format:rs": {
+            "cache": false
+        },
+        "//#format:fix": {
+            "cache": false
+        },
+        "bench": {
+            "dependsOn": [
+                "build"
+            ],
+            "cache": false
+        }
+    }
+}
