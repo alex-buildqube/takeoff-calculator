@@ -59,7 +59,7 @@ const {
   },
 });
 export default __napiModule.exports;
-export const State = __napiModule.exports.State;
+export const TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
 export const plus100 = __napiModule.exports.plus100;
 export const MeasurementType = __napiModule.exports.MeasurementType;
 export const Unit = __napiModule.exports.Unit;

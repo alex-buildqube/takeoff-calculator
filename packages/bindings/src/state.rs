@@ -9,7 +9,7 @@ use takeoff_core::scale::Scale;
 use takeoff_core::state::StateOptions;
 #[napi]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct State {
+pub struct TakeoffStateHandler {
   pages: HashMap<String, Page>,
   groups: HashMap<String, Group>,
   measurements: HashMap<String, MeasurementWrapper>,
@@ -17,7 +17,7 @@ pub struct State {
 }
 
 #[napi]
-impl State {
+impl TakeoffStateHandler {
   #[napi(constructor)]
   /// Creates a new state.
   ///
@@ -189,7 +189,7 @@ mod tests {
 
   #[test]
   fn test_find_measurement_scale() {
-    let mut state = State::new(StateOptions {
+    let mut state = TakeoffStateHandler::new(StateOptions {
       pages: vec![],
       groups: vec![],
       measurements: vec![],

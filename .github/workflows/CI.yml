@@ -421,11 +421,11 @@ jobs:
       # - name: List packages
       #   run: ls -R ./packages/bindings/npm
       #   shell: bash
-      - name: Set Provenance
-        run: npm config set provenance true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Set Provenance
+      #   run: npm config set provenance true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
@@ -433,7 +433,7 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       # - name: Publish
       #   working-directory: packages/bindings
       #   run: |

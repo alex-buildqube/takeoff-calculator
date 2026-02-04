@@ -108,7 +108,7 @@ const { instance: __napiInstance, module: __wasiModule, napiModule: __napiModule
   },
 })
 module.exports = __napiModule.exports
-module.exports.State = __napiModule.exports.State
+module.exports.TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler
 module.exports.plus100 = __napiModule.exports.plus100
 module.exports.MeasurementType = __napiModule.exports.MeasurementType
 module.exports.Unit = __napiModule.exports.Unit
