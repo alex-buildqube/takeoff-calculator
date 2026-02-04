@@ -1,8 +1,8 @@
-# `@napi-rs/package-template`
+# `@build-qube/takeoff-calculator`
 
-![https://github.com/napi-rs/package-template/actions](https://github.com/napi-rs/package-template/workflows/CI/badge.svg)
+![https://github.com/BuildQube/takeoff-calculator/actions](https://github.com/BuildQube/takeoff-calculator/workflows/CI/badge.svg)
 
-> Template project for writing node packages with napi-rs.
+
 
 # Usage
 
