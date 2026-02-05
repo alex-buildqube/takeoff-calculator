@@ -1,7 +1,6 @@
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use uom::fmt::DisplayStyle::Abbreviation;
-use uom::si::Quantity;
 use uom::si::area::{square_centimeter, square_foot, square_inch, square_meter, square_yard};
 use uom::si::f32::{Area, Length};
 use uom::si::length::{centimeter, foot, inch, meter, yard};

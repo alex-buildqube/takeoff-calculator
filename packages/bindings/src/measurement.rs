@@ -150,7 +150,7 @@ impl MeasurementWrapper {
 mod tests {
   use super::*;
   use takeoff_core::{coords::Point, scale::ScaleDefinition, unit::Unit};
-  use uom::si::area::{square_centimeter, square_foot, square_inch, square_meter, square_yard};
+  use uom::si::area::square_meter;
 
   #[test]
   fn test_calculate_area() {

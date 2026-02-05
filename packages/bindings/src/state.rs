@@ -74,7 +74,7 @@ impl TakeoffStateHandler {
     }
   }
 
-  fn compute_measurement(&mut self, measurement_id: &str) {
+  fn compute_measurement(&self, measurement_id: &str) {
     let measurement = self.measurements.get_mut(measurement_id);
     if let Some(mut measurement) = measurement {
       println!("computing measurement: {:?}", measurement.id());
@@ -106,44 +106,6 @@ impl TakeoffStateHandler {
     None
     // self.find_measurement_scale(measurement)
   }
-
-  // fn find_measurement_scale(
-  //   &self,
-  //   measurement_guard: &mut RefMut<'_, String, MeasurementWrapper>,
-  // ) -> Option<Scale> {
-  //   let measurement = measurement_guard;
-  //   let measurement = measurement_guard.value_mut();
-  //   if let Some(scale) = measurement.get_scale() {
-  //     return Some(scale.clone());
-  //   }
-  //   let page_id = measurement.page_id().to_string();
-  //   // drop(measurement);
-
-  //   let scales = self.get_page_scales(&page_id);
-
-  //   if scales.is_empty() {
-  //     return None;
-  //   }
-
-  //   let mut current_scale: Option<Scale> = None;
-  //   for scale in scales {
-  //     if matches!(scale, Scale::Area { .. }) {
-  //       // let mut measurement = measurement_guard;
-  //       if scale.is_in_bounding_box(&measurement_guard.measurement.to_geometry()) {
-  //         measurement_guard.set_scale(scale.clone());
-  //         return Some(scale.clone());
-  //       } else {
-  //         continue;
-  //       }
-  //     } else {
-  //       current_scale = Some(scale.clone());
-  //     }
-  //   }
-  //   if let Some(ref scale) = current_scale {
-  //     measurement.set_scale(scale.clone());
-  //   }
-  //   current_scale
-  // }
 
   fn get_page_scales(&self, page_id: &str) -> Vec<&Scale> {
     let scales = self
