@@ -1,18 +1,20 @@
 use crate::measurement::MeasurementWrapper;
+use dashmap::DashMap;
+
 use napi_derive::napi;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::sync::Arc;
 use takeoff_core::group::Group;
 use takeoff_core::measurement::Measurement;
 use takeoff_core::page::Page;
 use takeoff_core::scale::Scale;
 use takeoff_core::state::StateOptions;
 #[napi]
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct TakeoffStateHandler {
   pages: HashMap<String, Page>,
   groups: HashMap<String, Group>,
-  measurements: HashMap<String, MeasurementWrapper>,
+  measurements: Arc<DashMap<String, MeasurementWrapper>>,
   scales: HashMap<String, Scale>,
 }
 
@@ -39,27 +41,46 @@ impl TakeoffStateHandler {
       .into_iter()
       .map(|group| (group.id.clone(), group))
       .collect();
-    let measurements = options
-      .measurements
-      .into_iter()
-      .map(|measurement| {
-        (
-          measurement.id().to_string(),
-          MeasurementWrapper::new(measurement),
-        )
-      })
-      .collect();
     let scales = options
       .scales
       .into_iter()
       .map(|scale| (scale.id(), scale))
       .collect();
+    let measurements = Arc::new(DashMap::from_iter(options.measurements.into_iter().map(
+      |measurement| {
+        (
+          measurement.id().to_string(),
+          MeasurementWrapper::new(measurement),
+        )
+      },
+    )));
 
-    Self {
+    let state = Self {
       pages,
       groups,
       measurements,
       scales,
+    };
+
+    state.compute_measurements();
+    state
+  }
+
+  fn compute_measurements(&self) {
+    for mut measurement in self.measurements.iter_mut() {
+      let page_id = measurement.page_id();
+      let scales = self.get_page_scales(page_id);
+      measurement.calculate_scale(scales.into_iter().cloned().collect());
+    }
+  }
+
+  fn compute_measurement(&mut self, measurement_id: &str) {
+    let measurement = self.measurements.get_mut(measurement_id);
+    if let Some(mut measurement) = measurement {
+      println!("computing measurement: {:?}", measurement.id());
+      let page_id = measurement.page_id();
+      let scales = self.get_page_scales(page_id);
+      measurement.calculate_scale(scales.into_iter().cloned().collect());
     }
   }
 
@@ -75,34 +96,54 @@ impl TakeoffStateHandler {
   /// * `None` - If the measurement was not found.
   /// * `Some(scale)` - If the scale was found.
   pub fn get_measurement_scale(&self, measurement_id: String) -> Option<Scale> {
-    let measurement = self.measurements.get(&measurement_id)?;
-    self
-      .find_measurement_scale(&measurement.measurement)
-      .cloned()
-  }
-
-  fn find_measurement_scale(&self, measurement: &Measurement) -> Option<&Scale> {
-    let page_id = measurement.page_id();
-    let scales = self.get_page_scales(page_id);
-
-    if scales.is_empty() {
-      return None;
-    }
-
-    let mut current_scale: Option<&Scale> = None;
-    for scale in scales {
-      if matches!(scale, Scale::Area { .. }) {
-        if scale.is_in_bounding_box(&measurement.to_geometry()) {
-          return Some(scale);
-        } else {
-          continue;
-        }
-      } else {
-        current_scale = Some(scale);
+    let measurement = self.measurements.get_mut(&measurement_id);
+    if let Some(measurement) = measurement {
+      if let Some(scale) = measurement.get_scale() {
+        return Some(scale.clone());
       }
+      // return Some(measurement.get_scale().clone());
     }
-    current_scale
+    None
+    // self.find_measurement_scale(measurement)
   }
+
+  // fn find_measurement_scale(
+  //   &self,
+  //   measurement_guard: &mut RefMut<'_, String, MeasurementWrapper>,
+  // ) -> Option<Scale> {
+  //   let measurement = measurement_guard;
+  //   let measurement = measurement_guard.value_mut();
+  //   if let Some(scale) = measurement.get_scale() {
+  //     return Some(scale.clone());
+  //   }
+  //   let page_id = measurement.page_id().to_string();
+  //   // drop(measurement);
+
+  //   let scales = self.get_page_scales(&page_id);
+
+  //   if scales.is_empty() {
+  //     return None;
+  //   }
+
+  //   let mut current_scale: Option<Scale> = None;
+  //   for scale in scales {
+  //     if matches!(scale, Scale::Area { .. }) {
+  //       // let mut measurement = measurement_guard;
+  //       if scale.is_in_bounding_box(&measurement_guard.measurement.to_geometry()) {
+  //         measurement_guard.set_scale(scale.clone());
+  //         return Some(scale.clone());
+  //       } else {
+  //         continue;
+  //       }
+  //     } else {
+  //       current_scale = Some(scale.clone());
+  //     }
+  //   }
+  //   if let Some(ref scale) = current_scale {
+  //     measurement.set_scale(scale.clone());
+  //   }
+  //   current_scale
+  // }
 
   fn get_page_scales(&self, page_id: &str) -> Vec<&Scale> {
     let scales = self
@@ -155,11 +196,17 @@ impl TakeoffStateHandler {
   /// * `None` - If the measurement was not found.
   /// * `Some(measurement)` - If the measurement was found and updated.
   pub fn upsert_measurement(&mut self, measurement: Measurement) -> Option<Measurement> {
-    let measurement = self.measurements.insert(
+    let id = measurement.id().to_string();
+    let res = self.measurements.insert(
       measurement.id().to_string(),
       MeasurementWrapper::new(measurement),
     );
-    measurement.map(|m| m.measurement)
+    self.compute_measurement(&id);
+
+    if let Some(measurement) = res {
+      return Some(measurement.get_measurement());
+    }
+    None
   }
 
   #[napi]
@@ -226,9 +273,28 @@ mod tests {
       ],
     };
     state.upsert_measurement(measurement.clone());
-    let scale = state.find_measurement_scale(&measurement);
+    let scale = state.get_measurement_scale(measurement.id().to_string());
     assert_eq!(
       scale,
+      Some(Area {
+        id: "1".to_string(),
+        page_id: "1".to_string(),
+        bounding_box: (Point::new(0.0, 0.0), Point::new(1.0, 1.0)),
+        scale: ScaleDefinition {
+          pixel_distance: 1.0,
+          real_distance: 1.0,
+          unit: Unit::Meters,
+        },
+      })
+    );
+
+    let measurement = state
+      .measurements
+      .get(&measurement.id().to_string())
+      .unwrap();
+    let measurement = measurement;
+    assert_eq!(
+      measurement.get_scale(),
       Some(&Area {
         id: "1".to_string(),
         page_id: "1".to_string(),

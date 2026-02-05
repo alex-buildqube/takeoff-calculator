@@ -63,6 +63,13 @@ impl Scale {
     }
   }
 
+  pub fn get_unit(&self) -> Unit {
+    match self {
+      Scale::Area { scale, .. } => scale.unit,
+      Scale::Default { scale, .. } => scale.unit,
+    }
+  }
+
   pub fn is_in_bounding_box(&self, geometry: &Geometry<f64>) -> bool {
     match self {
       Scale::Area { .. } => {
@@ -70,6 +77,13 @@ impl Scale {
         polygon.contains(geometry)
       }
       _ => false,
+    }
+  }
+
+  pub fn ratio(&self) -> f64 {
+    match self {
+      Scale::Area { scale, .. } => scale.pixel_distance / scale.real_distance,
+      Scale::Default { scale, .. } => scale.pixel_distance / scale.real_distance,
     }
   }
 }

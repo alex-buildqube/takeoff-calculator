@@ -106,8 +106,8 @@ impl Measurement {
       Measurement::Count { .. } => Geometry::Point(self.to_point().into()),
     }
   }
-  /// Calculate the area of the rectangle
-  pub fn area(&self) -> f64 {
+  /// Calculate the area of the polygon
+  pub fn pixel_area(&self) -> f64 {
     let polygon = self.to_polygon();
     if let Some(polygon) = polygon {
       polygon.unsigned_area()
@@ -117,7 +117,7 @@ impl Measurement {
   }
 
   /// Calculate the perimeter of the rectangle
-  pub fn perimeter(&self) -> f64 {
+  pub fn pixel_perimeter(&self) -> f64 {
     match self {
       Measurement::Polygon { points, .. } => {
         let mut perimeter = 0.0;
@@ -147,5 +147,31 @@ impl Measurement {
       }
       Measurement::Count { .. } => 0.0,
     }
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_pixel_area() {
+    let measurement = Measurement::Rectangle {
+      id: "1".to_string(),
+      page_id: "1".to_string(),
+      group_id: "1".to_string(),
+      points: (Point::new(0.0, 0.0), Point::new(100.0, 50.0)),
+    };
+    assert!(measurement.pixel_area() == 5000.0);
+  }
+  #[test]
+  fn test_pixel_perimeter() {
+    let measurement = Measurement::Rectangle {
+      id: "1".to_string(),
+      page_id: "1".to_string(),
+      group_id: "1".to_string(),
+      points: (Point::new(0.0, 0.0), Point::new(100.0, 50.0)),
+    };
+    assert!(measurement.pixel_perimeter() == 300.0);
   }
 }

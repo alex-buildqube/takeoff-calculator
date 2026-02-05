@@ -1,6 +1,7 @@
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use uom::fmt::DisplayStyle::Abbreviation;
+use uom::si::Quantity;
 use uom::si::area::{square_centimeter, square_foot, square_inch, square_meter, square_yard};
 use uom::si::f32::{Area, Length};
 use uom::si::length::{centimeter, foot, inch, meter, yard};
@@ -18,6 +19,15 @@ pub enum Unit {
 }
 
 impl Unit {
+  pub fn convert_length_to_unit(&self, length: Length) -> f32 {
+    match self {
+      Unit::Yards => length.get::<yard>(),
+      Unit::Feet => length.get::<foot>(),
+      Unit::Inches => length.get::<inch>(),
+      Unit::Meters => length.get::<meter>(),
+      Unit::Centimeters => length.get::<centimeter>(),
+    }
+  }
   pub fn get_unit(&self, value: f32) -> Length {
     match self {
       Unit::Yards => Length::new::<yard>(value),
@@ -25,6 +35,16 @@ impl Unit {
       Unit::Inches => Length::new::<inch>(value),
       Unit::Meters => Length::new::<meter>(value),
       Unit::Centimeters => Length::new::<centimeter>(value),
+    }
+  }
+
+  pub fn convert_area_to_unit(&self, area: Area) -> f32 {
+    match self {
+      Unit::Yards => area.get::<square_yard>(),
+      Unit::Feet => area.get::<square_foot>(),
+      Unit::Inches => area.get::<square_inch>(),
+      Unit::Meters => area.get::<square_meter>(),
+      Unit::Centimeters => area.get::<square_centimeter>(),
     }
   }
 
@@ -201,6 +221,46 @@ impl UnitFormatter {
   }
 }
 
+// #[napi(discriminant = "type")]
+// #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+// pub enum UnitValue {
+//   Area { value: Area },
+//   Length { value: Length },
+// }
+
+#[napi(string_enum)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum UnitMagnitude {
+  Area,
+  Length,
+}
+
+#[napi]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UnitValue {
+  area: Option<Area>,
+  length: Option<Length>,
+  pub magnitude: UnitMagnitude,
+}
+
+#[napi]
+impl UnitValue {
+  pub fn new(value: f32, unit: Unit, magnitude: UnitMagnitude) -> Self {
+    match magnitude {
+      UnitMagnitude::Area => Self {
+        area: Some(unit.get_area_unit(value)),
+        length: None,
+        magnitude,
+      },
+      UnitMagnitude::Length => Self {
+        area: None,
+        length: Some(unit.get_unit(value)),
+        magnitude,
+      },
+    }
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -230,5 +290,16 @@ mod tests {
   fn test_convert_area() {
     let result = UnitUtils::convert_area(1.0, Unit::Meters, Unit::Feet);
     assert_eq!(result, 10.76391);
+  }
+
+  #[test]
+  fn test_new_unit_value() {
+    let unit_value = UnitValue::new(1.0, Unit::Meters, UnitMagnitude::Length);
+
+    assert_eq!(unit_value.length, Some(Length::new::<meter>(1.0)));
+    assert_eq!(unit_value.area, None);
+    let unit_value = UnitValue::new(1.0, Unit::Meters, UnitMagnitude::Area);
+    assert_eq!(unit_value.length, None);
+    assert_eq!(unit_value.area, Some(Area::new::<square_meter>(1.0)));
   }
 }
