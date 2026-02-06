@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 2.0.1
+
+### Patch Changes
+
+- e68f6ae: Fix: perimeter in polyline
+
 ## 2.0.0
 
 ### Major Changes
