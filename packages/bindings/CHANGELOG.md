@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 2.0.2
+
+### Patch Changes
+
+- de272be: Fix measurement update clearing previous state
+
 ## 2.0.1
 
 ### Patch Changes
