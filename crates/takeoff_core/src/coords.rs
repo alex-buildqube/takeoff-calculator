@@ -47,3 +47,25 @@ impl From<Point> for GeoPoint<f64> {
     GeoPoint::new(p.x, p.y)
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use geo::{Distance, Euclidean};
+
+  use super::*;
+
+  #[test]
+  fn test_distance_to() {
+    let point1 = Point::new(43.0, 55.0);
+    let point2 = Point::new(0.0, 0.0);
+    // assert_eq!(point1.distance_to(&point2), 76.0);
+
+    let start: GeoPoint<f64> = (point1).into();
+    let end: GeoPoint<f64> = (point2).into();
+    assert_eq!(
+      Euclidean.distance(&start, &end),
+      point1.distance_to(&point2)
+    );
+    assert_eq!(Euclidean.distance(&start, &end).round(), 70.0);
+  }
+}

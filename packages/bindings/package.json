@@ -28,6 +28,12 @@
   "napi": {
     "binaryName": "takeoff-calculator",
     "constEnum": false,
+    "wasm": {
+      "browser": {
+        "asyncInit": true,
+        "fs": false
+      }
+    },
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",
