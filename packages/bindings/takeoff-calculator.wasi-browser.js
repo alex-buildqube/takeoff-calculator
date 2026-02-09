@@ -65,5 +65,6 @@ export const TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
 export const plus100 = __napiModule.exports.plus100;
 export const UnitValue = __napiModule.exports.UnitValue;
 export const MeasurementType = __napiModule.exports.MeasurementType;
+export const simplifyPolyline = __napiModule.exports.simplifyPolyline;
 export const Unit = __napiModule.exports.Unit;
 export const UnitValueItemType = __napiModule.exports.UnitValueItemType;

@@ -2,26 +2,26 @@
 /* eslint-disable */
 export declare class GroupWrapper {
   /** Get the id of the group. */
-  get id(): string;
-  get area(): UnitValue | null;
-  get length(): UnitValue | null;
-  get points(): number | null;
-  get count(): number | null;
+  get id(): string
+  get area(): UnitValue | null
+  get length(): UnitValue | null
+  get points(): number | null
+  get count(): number | null
 }
 
 export declare class MeasurementWrapper {
-  get points(): number;
-  get measurement(): Measurement;
-  get area(): UnitValue | null;
-  convertArea(unit: Unit): number | null;
-  convertLength(unit: Unit): number | null;
-  get length(): UnitValue | null;
-  get scale(): Scale | null;
-  get id(): string;
-  get pageId(): string;
-  get groupId(): string;
-  get rawArea(): number;
-  get rawPerimeter(): number;
+  get points(): number
+  get measurement(): Measurement
+  get area(): UnitValue | null
+  convertArea(unit: Unit): number | null
+  convertLength(unit: Unit): number | null
+  get length(): UnitValue | null
+  get scale(): Scale | null
+  get id(): string
+  get pageId(): string
+  get groupId(): string
+  get rawArea(): number
+  get rawPerimeter(): number
 }
 
 export declare class TakeoffStateHandler {
@@ -36,8 +36,8 @@ export declare class TakeoffStateHandler {
    *
    * * `State` - The new state.
    */
-  constructor(options?: StateOptions | undefined | null);
-  getMeasurementsByGroupId(groupId: string): Array<MeasurementWrapper>;
+  constructor(options?: StateOptions | undefined | null)
+  getMeasurementsByGroupId(groupId: string): Array<MeasurementWrapper>
   /**
    * Get the scale for a measurement.
    *
@@ -50,7 +50,7 @@ export declare class TakeoffStateHandler {
    * * `None` - If the measurement was not found.
    * * `Some(scale)` - If the scale was found.
    */
-  getMeasurementScale(measurementId: string): Scale | null;
+  getMeasurementScale(measurementId: string): Scale | null
   /**
    * Inserts or updates a page in the state.
    *
@@ -63,8 +63,8 @@ export declare class TakeoffStateHandler {
    * * `None` - If the page was not found.
    * * `Some(page)` - If the page was found and updated.
    */
-  upsertPage(page: Page): Page | null;
-  getGroup(groupId: string): GroupWrapper | null;
+  upsertPage(page: Page): Page | null
+  getGroup(groupId: string): GroupWrapper | null
   /**
    * Inserts or updates a group in the state.
    *
@@ -77,7 +77,7 @@ export declare class TakeoffStateHandler {
    * * `None` - If the group was not found.
    * * `Some(group)` - If the group was found and updated.
    */
-  upsertGroup(group: Group): Group | null;
+  upsertGroup(group: Group): Group | null
   /**
    * Inserts or updates a measurement in the state.
    *
@@ -90,8 +90,8 @@ export declare class TakeoffStateHandler {
    * * `None` - If the measurement was not found.
    * * `Some(measurement)` - If the measurement was found and updated.
    */
-  upsertMeasurement(measurement: Measurement): Measurement | null;
-  getMeasurement(measurementId: string): MeasurementWrapper | null;
+  upsertMeasurement(measurement: Measurement): Measurement | null
+  getMeasurement(measurementId: string): MeasurementWrapper | null
   /**
    * Inserts or updates a scale in the state.
    *
@@ -104,7 +104,7 @@ export declare class TakeoffStateHandler {
    * * `None` - If the scale was not found.
    * * `Some(scale)` - If the scale was found and updated.
    */
-  upsertScale(scale: Scale): Scale | null;
+  upsertScale(scale: Scale): Scale | null
   /**
    * Get the measurements that are missing a scale.
    *
@@ -112,104 +112,80 @@ export declare class TakeoffStateHandler {
    *
    * * `Vec<MeasurementWrapper>` - The measurements that are missing a scale.
    */
-  getMeasurementsMissingScale(): Array<MeasurementWrapper>;
+  getMeasurementsMissingScale(): Array<MeasurementWrapper>
+
 }
 
-export declare function plus100(input: number): number;
+export declare function plus100(input: number): number
 export declare class UnitValue {
-  constructor(value: number, unit: Unit, magnitude: UnitValueItemType);
-  display(unit: Unit): string;
-  getConvertedValue(to: Unit): number;
+  constructor(value: number, unit: Unit, magnitude: UnitValueItemType)
+  display(unit: Unit): string
+  getConvertedValue(to: Unit): number
 }
 
 export interface Group {
-  id: string;
-  name?: string;
-  measurementType: MeasurementType;
+  id: string
+  name?: string
+  measurementType: MeasurementType
 }
 
 export type Measurement =
-  | {
-      type: "Count";
-      id: string;
-      pageId: string;
-      groupId: string;
-      points: [Point];
-    }
-  | {
-      type: "Polygon";
-      id: string;
-      pageId: string;
-      groupId: string;
-      points: Array<Point>;
-    }
-  | {
-      type: "Polyline";
-      id: string;
-      pageId: string;
-      groupId: string;
-      points: Array<Point>;
-    }
-  | {
-      type: "Rectangle";
-      id: string;
-      pageId: string;
-      groupId: string;
-      points: [Point, Point];
-    };
+  | { type: 'Count', id: string, pageId: string, groupId: string, points: [Point] }
+  | { type: 'Polygon', id: string, pageId: string, groupId: string, points: Array<Point> }
+  | { type: 'Polyline', id: string, pageId: string, groupId: string, points: Array<Point> }
+  | { type: 'Rectangle', id: string, pageId: string, groupId: string, points: [Point, Point] }
 
-export type MeasurementType = "Area" | "Linear" | "Count";
+export type MeasurementType =  'Area'|
+'Linear'|
+'Count';
 
 export interface Page {
-  id: string;
-  name?: string;
-  width?: number;
-  height?: number;
-  viewport?: PageViewport;
+  id: string
+  name?: string
+  width?: number
+  height?: number
+  viewport?: PageViewport
 }
 
 export interface PageViewport {
-  width: number;
-  height: number;
+  width: number
+  height: number
 }
 
 /** Represents a 2D point with floating point coordinates */
 export interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 export type Scale =
-  | {
-      type: "Area";
-      id: string;
-      pageId: string;
-      scale: ScaleDefinition;
-      boundingBox: [Point, Point];
-    }
-  | { type: "Default"; id: string; pageId: string; scale: ScaleDefinition };
+  | { type: 'Area', id: string, pageId: string, scale: ScaleDefinition, boundingBox: [Point, Point] }
+  | { type: 'Default', id: string, pageId: string, scale: ScaleDefinition }
 
 export interface ScaleDefinition {
-  pixelDistance: number;
-  realDistance: number;
-  unit: Unit;
+  pixelDistance: number
+  realDistance: number
+  unit: Unit
 }
 
+/** Simplify a polyline using the Ramer-Douglas-Peucker algorithm */
+export declare function simplifyPolyline(points: Array<Point>, tolerance: number): Array<Point>
+
 export interface StateOptions {
-  pages: Array<Page>;
-  groups: Array<Group>;
-  measurements: Array<Measurement>;
-  scales: Array<Scale>;
+  pages: Array<Page>
+  groups: Array<Group>
+  measurements: Array<Measurement>
+  scales: Array<Scale>
 }
 
 /** Measurement units supported by the system */
-export type Unit =
-  /** Imperial units */
-  | "Yards"
-  | "Feet"
-  | "Inches"
-  /** Metric units */
-  | "Meters"
-  | "Centimeters";
+export type Unit = /** Imperial units */
+'Yards'|
+'Feet'|
+'Inches'|
+/** Metric units */
+'Meters'|
+'Centimeters';
 
-export type UnitValueItemType = "Area" | "Length";
+export type UnitValueItemType =  'Area'|
+'Length';
