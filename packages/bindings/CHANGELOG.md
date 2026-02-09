@@ -1,5 +1,11 @@
 # @build-qube/takeoff-calculator
 
+## 2.0.3
+
+### Patch Changes
+
+- 097badc: Added simplify polyline function
+
 ## 2.0.2
 
 ### Patch Changes
