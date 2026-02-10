@@ -107,4 +107,51 @@ describe("ContourWrapper", () => {
 		expect(volume3?.fill).toBe(0);
 		expect(volume3?.uncoveredArea).toBe(0);
 	});
+
+	test("should get z data for a raised point in a contour", () => {
+		const contour = new ContourWrapper({
+			id: "test-contour",
+			name: "Test Contour",
+			pageId: "test-page",
+			lines: [
+				{
+					elevation: 0,
+					points: [
+						{
+							x: 0,
+							y: 0,
+						},
+						{
+							x: 99.9,
+							y: 0,
+						},
+						{
+							x: 99.9,
+							y: 99.9,
+						},
+						{
+							x: 0,
+							y: 99.9,
+						},
+					],
+				},
+			],
+			pointsOfInterest: [
+				{
+					elevation: 100,
+					point: {
+						x: 50,
+						y: 50,
+					},
+				},
+			],
+		});
+		const scatterData = contour.getScatterData(10);
+		expect(scatterData).toBeDefined();
+		expect(scatterData?.length).toBe(100);
+
+		const z = contour.getZAt(50, 50);
+		expect(z).toBeDefined();
+		expect(z).toBe(100);
+	});
 });

@@ -61,6 +61,15 @@ impl ContourWrapper {
     Some(mesh.volume_against(&reference, cell_size))
   }
 
+  /// Get the z value at a given x, y coordinate.
+  /// Returns None if the surface mesh is not available (e.g. contour conversion failed).
+  #[napi]
+  pub fn get_z_at(&self, x: f64, y: f64) -> Option<f64> {
+    let mesh = self._surface_mesh.lock().ok()?;
+    let mesh = mesh.as_ref()?;
+    mesh.z_at(x, y)
+  }
+
   /// Get scatter data for the contour.
   /// Returns None if the surface mesh is not available (e.g. contour conversion failed).
   ///

@@ -1,6 +1,12 @@
 use geo::{Coord, Point as GeoPoint, coord};
+use napi::bindgen_prelude::Either;
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
+
+pub trait DistanceTrait<T> {
+  /// Calculate distance between two points
+  fn distance_to(&self, other: &T) -> f64;
+}
 
 /// Represents a 2D point with floating point coordinates
 #[napi(object)]
@@ -14,9 +20,10 @@ impl Point {
   pub fn new(x: f64, y: f64) -> Self {
     Self { x, y }
   }
+}
 
-  /// Calculate distance between two points
-  pub fn distance_to(&self, other: &Point) -> f64 {
+impl DistanceTrait<Point> for Point {
+  fn distance_to(&self, other: &Point) -> f64 {
     let dx = self.x - other.x;
     let dy = self.y - other.y;
     (dx * dx + dy * dy).sqrt()
@@ -59,6 +66,24 @@ pub struct Point3D {
 impl Point3D {
   pub fn new(x: f64, y: f64, z: f64) -> Self {
     Self { x, y, z }
+  }
+}
+
+impl DistanceTrait<Point3D> for Point3D {
+  fn distance_to(&self, other: &Point3D) -> f64 {
+    let dx = self.x - other.x;
+    let dy = self.y - other.y;
+    let dz = self.z - other.z;
+    (dx * dx + dy * dy + dz * dz).sqrt()
+  }
+}
+
+/// Calculate distance between two points
+#[napi]
+pub fn distance(points: Either<(Point, Point), (Point3D, Point3D)>) -> f64 {
+  match points {
+    Either::A((a, b)) => a.distance_to(&b),
+    Either::B((a, b)) => a.distance_to(&b),
   }
 }
 

@@ -1,4 +1,4 @@
-use crate::coords::Point;
+use crate::coords::{DistanceTrait, Point};
 use geo::{Area, Coord, CoordsIter, Geometry, LineString, Polygon as GeoPolygon, Rect};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
