@@ -504,11 +504,5 @@ mod tests {
     assert!(group_removed.is_some());
     let group = state.get_group("1".to_string());
     assert!(group.is_none());
-    let group_area = group
-      .unwrap()
-      .get_area()
-      .unwrap()
-      .get_converted_value(Unit::Meters);
-    assert_eq!(group_area, 0.25);
   }
 }
