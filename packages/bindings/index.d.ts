@@ -225,6 +225,9 @@ export declare function distance(
 	points: [Point, Point] | [Point3D, Point3D],
 ): number;
 
+/** Get the centroid of a measurement */
+export declare function getCentroid(measurement: Measurement): Point | null;
+
 export interface Group {
 	id: string;
 	name?: string;

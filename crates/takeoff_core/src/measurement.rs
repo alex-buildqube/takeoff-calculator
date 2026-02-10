@@ -1,5 +1,5 @@
 use crate::coords::{DistanceTrait, Point};
-use geo::{Area, Coord, CoordsIter, Geometry, LineString, Polygon as GeoPolygon, Rect};
+use geo::{Area, Centroid, Coord, CoordsIter, Geometry, LineString, Polygon as GeoPolygon, Rect};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 
@@ -106,6 +106,13 @@ impl Measurement {
       Measurement::Count { .. } => Geometry::Point(self.to_point().into()),
     }
   }
+
+  pub fn get_centroid(&self) -> Option<Point> {
+    let geometry = self.to_geometry();
+    let centroid = geometry.centroid();
+    centroid.map(Point::from)
+  }
+
   /// Calculate the area of the polygon
   pub fn pixel_area(&self) -> f64 {
     let polygon = self.to_polygon();
