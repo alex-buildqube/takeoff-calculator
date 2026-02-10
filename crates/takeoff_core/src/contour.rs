@@ -49,6 +49,7 @@ impl From<ContourPointOfInterestInput> for Point3D {
 pub struct ContourInput {
   pub id: String,
   pub name: Option<String>,
+  pub page_id: String,
 
   /// The lines that make up the contour map
   pub lines: Vec<ContourLineInput>,
@@ -239,6 +240,7 @@ mod tests {
     let input = ContourInput {
       id: "1".to_string(),
       name: Some("test".to_string()),
+      page_id: "1".to_string(),
       lines: vec![ContourLineInput {
         elevation: 10.0,
         points: vec![
@@ -270,6 +272,7 @@ mod tests {
     let input = ContourInput {
       id: "1".to_string(),
       name: None,
+      page_id: "1".to_string(),
       lines: vec![ContourLineInput {
         elevation: 10.0,
         points: vec![Point::new(0.0, 0.0), Point::new(1.0, 0.0)],
@@ -285,6 +288,7 @@ mod tests {
     let input = ContourInput {
       id: "1".to_string(),
       name: None,
+      page_id: "1".to_string(),
       lines: vec![ContourLineInput {
         elevation: 10.0,
         points: vec![
@@ -304,6 +308,7 @@ mod tests {
     let input = ContourInput {
       id: "1".to_string(),
       name: None,
+      page_id: "1".to_string(),
       lines: vec![
         ContourLineInput {
           elevation: 10.0,
@@ -328,6 +333,7 @@ mod tests {
     let input = ContourInput {
       id: "1".to_string(),
       name: None,
+      page_id: "1".to_string(),
       lines: vec![ContourLineInput {
         elevation: 10.0,
         points: vec![

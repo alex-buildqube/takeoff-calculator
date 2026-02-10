@@ -21,6 +21,18 @@ export const ContourComponent = () => {
   const minZ = Math.min(...(data?.z ?? []));
   const maxZ = Math.max(...(data?.z ?? []));
 
+  const pointData = contour
+    .getSurfacePoints()
+    ?.reduce<{ x: number[]; y: number[]; z: number[] }>(
+      (acc, cur) => {
+        acc.x.push(cur.x);
+        acc.y.push(cur.y);
+        acc.z.push(cur.z);
+        return acc;
+      },
+      { x: [], y: [], z: [] },
+    );
+
   useEffect(() => {
     if (ref.current) {
       const canvas = ref.current;
@@ -63,6 +75,7 @@ export const ContourComponent = () => {
     <div>
       <div style={{ width: "100%", height: "100%" }}>
         <h1>Contour</h1>
+
         <div
           style={{
             width: "100%",
@@ -125,6 +138,42 @@ export const ContourComponent = () => {
             style={{ flex: 1 }}
           />
         </div>
+        <Plot
+          data={[
+            {
+              ...pointData,
+              type: "scatter3d",
+              mode: "markers",
+              marker: {
+                size: 5,
+                // color: 'blue',
+                color: pointData?.z,
+                colorscale: "Portland",
+              },
+              // zmin: 0,
+              // zmax: 5000
+            },
+          ]}
+          layout={{
+            width: 1000,
+            height: 600,
+
+            autosize: true,
+            title: {
+              text: "Contour Points",
+            },
+            scene: {
+              zaxis: {
+                range: [minZ - maxZ / 2, maxZ * 2],
+              },
+            },
+          }}
+          config={{
+            responsive: true,
+          }}
+          useResizeHandler={true} // Crucial prop for automatic resizing
+          style={{ width: "100%", height: "100%" }}
+        />
         <Plot
           data={[
             {

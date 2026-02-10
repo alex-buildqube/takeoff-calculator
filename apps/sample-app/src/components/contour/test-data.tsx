@@ -771,7 +771,7 @@ const testData: (Measurement & {
     groupId: "scribble-group-linear",
   },
   {
-    elevation: 500,
+    elevation: 525,
     type: "Polyline",
     points: [
       {
@@ -856,7 +856,7 @@ const testData: (Measurement & {
     groupId: "scribble-group-linear",
   },
   {
-    elevation: 425,
+    elevation: 600,
     type: "Polyline",
     points: [
       {
@@ -932,17 +932,52 @@ const testData: (Measurement & {
     pageId: "page-2",
     groupId: "scribble-group-linear",
   },
+  {
+    pageId: "page-2",
+    groupId: "scribble-group-linear",
+    type: "Count",
+    id: "Rectangle_1770669068650_6o12j1f8u",
+    points: [
+      {
+        x: 0,
+        y: 0,
+      },
+    ],
+    elevation: 400,
+  },
+  {
+    pageId: "page-2",
+    groupId: "scribble-group-linear",
+    type: "Count",
+    id: "Rectangle_1770669068650_6o12j1f8u",
+    points: [
+      {
+        x: 523,
+        y: 625,
+      },
+    ],
+    elevation: 650,
+  },
 ];
 
 export const TEST_CONTOUR: ContourInput = {
   id: "test-contour",
   name: "Test Contour",
-  lines: testData.map((measure, idx) => {
-    return {
-      elevation: measure.elevation,
-      // (288 * 12 * 20),
-      points: measure.points,
-    };
-  }),
-  pointsOfInterest: [],
+  pointsOfInterest: testData
+    .filter((measure) => measure.type === "Count")
+    .map((measure, idx) => {
+      return {
+        elevation: measure.elevation,
+        point: measure.points[0],
+      };
+    }),
+  lines: testData
+    .filter((measure) => measure.type === "Polyline")
+    .map((measure, idx) => {
+      return {
+        elevation: measure.elevation,
+        // (288 * 12 * 20),
+        points: measure.points,
+      };
+    }),
 };

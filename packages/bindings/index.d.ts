@@ -2,6 +2,26 @@
 /* eslint-disable */
 export declare class ContourWrapper {
   constructor(contour: ContourInput)
+  /** Get the surface points for the contour. */
+  getSurfacePoints(): Array<Point3D> | null
+  /**
+   * Compute cut/fill volume against a reference surface.
+   * Returns None if the surface mesh is not available (e.g. contour conversion failed).
+   */
+  volumeAgainst(reference: ReferenceSurfaceInput, cellSize?: number | undefined | null): VolumetricResult | null
+  /**
+   * Get scatter data for the contour.
+   * Returns None if the surface mesh is not available (e.g. contour conversion failed).
+   *
+   * # Arguments
+   *
+   * * `step` - The step size for the scatter data.
+   *
+   * # Returns
+   *
+   * * `Vec<Point3D>` - The scatter data.
+   * * `None` - If the surface mesh is not available (e.g. contour conversion failed).
+   */
   getScatterData(step: number): Array<Point3D> | null
 }
 
@@ -131,6 +151,7 @@ export declare class UnitValue {
 export interface ContourInput {
   id: string
   name?: string
+  pageId: string
   /** The lines that make up the contour map */
   lines: Array<ContourLineInput>
   /** The points of interest that are used to create the contour map */
@@ -190,6 +211,11 @@ export interface Point3D {
   z: number
 }
 
+/** Input for creating a reference surface from JS/TS. */
+export type ReferenceSurfaceInput =
+  | { type: 'Polygon', points: Array<Point>, elevation: number }
+  | { type: 'Rectangle', points: [Point, Point], elevation: number }
+
 export type Scale =
   | { type: 'Area', id: string, pageId: string, scale: ScaleDefinition, boundingBox: [Point, Point] }
   | { type: 'Default', id: string, pageId: string, scale: ScaleDefinition }
@@ -221,3 +247,13 @@ export type Unit = /** Imperial units */
 
 export type UnitValueItemType =  'Area'|
 'Length';
+
+/** Result of a volumetric cut/fill calculation. */
+export interface VolumetricResult {
+  /** Volume to remove (terrain above reference). */
+  cut: number
+  /** Volume to add (terrain below reference). */
+  fill: number
+  /** Area where terrain data was unavailable (z_at returned None). */
+  uncoveredArea: number
+}
