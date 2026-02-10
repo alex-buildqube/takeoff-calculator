@@ -251,7 +251,7 @@ describe("TakeoffStateHandler", () => {
 		const initialGroupArea = sampledGroup.area?.getConvertedValue("Meters");
 		const initialMeasurementArea =
 			sampledMeasurement.area?.getConvertedValue("Meters");
-		console.log(initialGroupArea, initialMeasurementArea);
+
 		expect(sampledGroup.area).toBeDefined();
 		expect(sampledMeasurement.area).toBeDefined();
 
@@ -263,5 +263,46 @@ describe("TakeoffStateHandler", () => {
 		// remove the group
 		state.removeGroup(sampledGroup.id);
 		expect(state.getGroup(sampledGroup.id)).toBeNull();
+	});
+	test("should remove measurements when removing a group", () => {
+		const state = new TakeoffStateHandler();
+
+		const pageIds = generatePageIds(25);
+		const scales = pageIds.flatMap((pageId) => createManyScales(1, { pageId }));
+		const groups = createManyGroups(10);
+
+		const measurements: Measurement[] = createManyMeasurements(1000).map(
+			(measurement) => {
+				const scale = faker.helpers.arrayElement(scales);
+				const group = faker.helpers.arrayElement(groups);
+				return {
+					...measurement,
+
+					scaleId: scale.id,
+					pageId: scale.pageId,
+					groupId: group.id,
+				};
+			},
+		);
+		const calls = setupCalls({
+			groups,
+			measurements,
+			scales,
+		});
+
+		executeCalls(state, faker.helpers.shuffle(calls));
+		const sampledGroup = faker.helpers.arrayElement(groups);
+
+		const measurementsInGroup = state.getMeasurementsByGroupId(sampledGroup.id);
+		expect(measurementsInGroup.length).toBe(
+			measurements.filter((m) => m.groupId === sampledGroup.id).length,
+		);
+
+		state.removeGroup(sampledGroup.id);
+		expect(state.getMeasurementsByGroupId(sampledGroup.id).length).toBe(0);
+		expect(state.getGroup(sampledGroup.id)).toBeNull();
+		for (const measurement of measurementsInGroup) {
+			expect(state.getMeasurement(measurement.id)).toBeNull();
+		}
 	});
 });

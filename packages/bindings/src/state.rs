@@ -187,6 +187,16 @@ impl TakeoffStateHandler {
   pub fn remove_group(&self, group_id: String) -> Option<Group> {
     let res = self.groups.remove(&group_id);
     if let Some((_, group)) = res {
+      // also remove any measurements tied to this group
+      let to_remove: Vec<String> = self
+        .measurements
+        .iter()
+        .filter(|entry| entry.value().get_group_id() == group_id)
+        .map(|entry| entry.key().clone())
+        .collect();
+      for mid in to_remove {
+        self.remove_measurement(mid);
+      }
       return Some(group.get_group());
     }
 
