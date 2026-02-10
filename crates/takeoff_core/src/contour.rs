@@ -164,16 +164,7 @@ impl TryFrom<ContourInput> for SurfaceMesh {
   type Error = SurfaceMeshError;
 
   fn try_from(input: ContourInput) -> Result<Self, Self::Error> {
-    let mut points: Vec<Point3D> = Vec::new();
-
-    for line in input.lines {
-      let line_points: Vec<Point3D> = line.into();
-      points.extend(line_points);
-    }
-    for point_of_interest in input.points_of_interest {
-      let point_of_interest_point: Point3D = point_of_interest.into();
-      points.push(point_of_interest_point);
-    }
+    let points = input.get_points();
 
     let vertices = Self::deduplicate_points(&points);
 
@@ -213,21 +204,51 @@ impl ContourInput {
     SurfaceMesh::try_from(self.clone())
   }
 
+  pub fn get_points(&self) -> Vec<Point3D> {
+    let mut points: Vec<Point3D> = Vec::new();
+
+    for line in self.lines.clone() {
+      let line_points: Vec<Point3D> = line.into();
+      points.extend(line_points);
+    }
+    for point_of_interest in self.points_of_interest.clone() {
+      let point_of_interest_point: Point3D = point_of_interest.into();
+      points.push(point_of_interest_point);
+    }
+    points
+  }
+
   /// Get contour bounding box
   pub fn bounding_box(&self) -> Option<((f64, f64), (f64, f64))> {
     let mut min_x = f64::MAX;
     let mut max_x = f64::MIN;
     let mut min_y = f64::MAX;
     let mut max_y = f64::MIN;
+    let mut has_points = false;
+
     for line in &self.lines {
       for point in &line.points {
+        has_points = true;
         min_x = min_x.min(point.x);
         max_x = max_x.max(point.x);
         min_y = min_y.min(point.y);
         max_y = max_y.max(point.y);
       }
     }
-    Some(((min_x, min_y), (max_x, max_y)))
+
+    for poi in &self.points_of_interest {
+      has_points = true;
+      min_x = min_x.min(poi.point.x);
+      max_x = max_x.max(poi.point.x);
+      min_y = min_y.min(poi.point.y);
+      max_y = max_y.max(poi.point.y);
+    }
+
+    if has_points {
+      Some(((min_x, min_y), (max_x, max_y)))
+    } else {
+      None
+    }
   }
 }
 

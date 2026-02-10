@@ -1,13 +1,13 @@
 {
-  "extends": ["//"],
-  "tasks": {
-    "dev": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": [
-        "@build-qube/takeoff-calculator#build",
-        "@build-qube/takeoff-calculator#build:wasm"
-      ]
-    }
-  }
+	"extends": ["//"],
+	"tasks": {
+		"dev": {
+			"cache": false,
+			"persistent": true,
+			"dependsOn": [
+				"@build-qube/takeoff-calculator#build",
+				"@build-qube/takeoff-calculator#build:wasm"
+			]
+		}
+	}
 }

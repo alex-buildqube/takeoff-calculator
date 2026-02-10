@@ -1,9 +1,9 @@
 {
-  "extends": ["//"],
-  "tasks": {
-    "build:wasm": {
-      "dependsOn": ["build"],
-      "outputs": ["dist/**", "*.wasm", "index.js", "index.d.ts", "browser.js"]
-    }
-  }
+	"extends": ["//"],
+	"tasks": {
+		"build:wasm": {
+			"dependsOn": ["build"],
+			"outputs": ["dist/**", "*.wasm", "index.js", "index.d.ts", "browser.js"]
+		}
+	}
 }

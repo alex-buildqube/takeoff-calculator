@@ -74,36 +74,31 @@ impl ContourWrapper {
   /// * `None` - If the surface mesh is not available (e.g. contour conversion failed).
   #[napi]
   pub fn get_scatter_data(&self, step: i32) -> Option<Vec<Point3D>> {
-    // let surface_mesh = self._surface_mesh.lock().unwrap().as_ref().unwrap();
-    let bounding_box = self.contour.bounding_box();
-    if let Some(bounding_box) = bounding_box {
-      let (min_x, min_y) = bounding_box.0;
-      let (max_x, max_y) = bounding_box.1;
-      let mut data: Vec<Point3D> = Vec::new();
-      println!(
-        "min_x: {}, min_y: {}, max_x: {}, max_y: {}",
-        min_x, min_y, max_x, max_y
-      );
-      let x_start = min_x as i32;
-      let x_end = max_x as i32;
-      let y_start = min_y as i32;
-      let y_end = max_y as i32;
-      for x in (x_start..x_end).step_by(step as usize) {
-        for y in (y_start..y_end).step_by(step as usize) {
-          let z = self
-            ._surface_mesh
-            .lock()
-            .unwrap()
-            .as_ref()
-            .unwrap()
-            .z_at(x as f64, y as f64);
-          if let Some(z) = z {
-            data.push(Point3D::new(x as f64, y as f64, z));
-          }
+    if step <= 0 {
+      return None;
+    }
+    let step = step as usize;
+
+    let bounding_box = self.contour.bounding_box()?;
+    let mesh_guard = self._surface_mesh.lock().ok()?;
+    let surface_mesh = mesh_guard.as_ref()?;
+
+    let (min_x, min_y) = bounding_box.0;
+    let (max_x, max_y) = bounding_box.1;
+    let mut data: Vec<Point3D> = Vec::new();
+
+    let x_start = min_x.floor() as i32;
+    let x_end = max_x.ceil() as i32;
+    let y_start = min_y.floor() as i32;
+    let y_end = max_y.ceil() as i32;
+
+    for x in (x_start..=x_end).step_by(step) {
+      for y in (y_start..=y_end).step_by(step) {
+        if let Some(z) = surface_mesh.z_at(x as f64, y as f64) {
+          data.push(Point3D::new(x as f64, y as f64, z));
         }
       }
-      return Some(data);
     }
-    None
+    Some(data)
   }
 }
