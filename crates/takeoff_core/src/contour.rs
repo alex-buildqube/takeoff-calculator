@@ -1,5 +1,6 @@
 use crate::coords::{Point, Point3D};
 use delaunator::triangulate;
+use geo::{BoundingRect, Geometry, GeometryCollection, LineString, Point as GeoPoint};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -10,6 +11,12 @@ pub struct ContourLineInput {
   /// The elevation of the contour line (in pixels)
   pub elevation: f64,
   pub points: Vec<Point>,
+}
+
+impl ContourLineInput {
+  pub fn to_geometry(&self) -> LineString<f64> {
+    LineString::from(self.points.clone())
+  }
 }
 
 impl From<ContourLineInput> for Vec<Point3D> {
@@ -218,37 +225,35 @@ impl ContourInput {
     points
   }
 
+  fn get_geometry_collection(&self) -> GeometryCollection {
+    let line_geometries = self
+      .lines
+      .iter()
+      .map(|line| Geometry::LineString(line.to_geometry()));
+    let point_geometries = self
+      .points_of_interest
+      .iter()
+      .map(|point| Geometry::Point(GeoPoint::new(point.point.x, point.point.y)));
+
+    let geometries = line_geometries.chain(point_geometries).collect();
+
+    GeometryCollection::new_from(geometries)
+  }
+
   /// Get contour bounding box
   pub fn bounding_box(&self) -> Option<((f64, f64), (f64, f64))> {
-    let mut min_x = f64::MAX;
-    let mut max_x = f64::MIN;
-    let mut min_y = f64::MAX;
-    let mut max_y = f64::MIN;
-    let mut has_points = false;
-
-    for line in &self.lines {
-      for point in &line.points {
-        has_points = true;
-        min_x = min_x.min(point.x);
-        max_x = max_x.max(point.x);
-        min_y = min_y.min(point.y);
-        max_y = max_y.max(point.y);
-      }
+    let geometry_collection = self.get_geometry_collection();
+    let bounding_box = geometry_collection.bounding_rect();
+    if let Some(bounding_box) = bounding_box {
+      let min = bounding_box.min();
+      let max = bounding_box.max();
+      let min_x = min.x;
+      let min_y = min.y;
+      let max_x = max.x;
+      let max_y = max.y;
+      return Some(((min_x, min_y), (max_x, max_y)));
     }
-
-    for poi in &self.points_of_interest {
-      has_points = true;
-      min_x = min_x.min(poi.point.x);
-      max_x = max_x.max(poi.point.x);
-      min_y = min_y.min(poi.point.y);
-      max_y = max_y.max(poi.point.y);
-    }
-
-    if has_points {
-      Some(((min_x, min_y), (max_x, max_y)))
-    } else {
-      None
-    }
+    None
   }
 }
 
