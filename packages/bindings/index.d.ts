@@ -144,6 +144,8 @@ export declare class TakeoffStateHandler {
 }
 
 export declare function plus100(input: number): number;
+
+export declare function plus200(input: number): number;
 export declare class UnitValue {
 	constructor(value: number, unit: Unit, magnitude: UnitValueItemType);
 	display(unit: Unit): string;
