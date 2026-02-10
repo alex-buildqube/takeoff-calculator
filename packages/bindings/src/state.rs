@@ -248,7 +248,9 @@ impl TakeoffStateHandler {
   pub fn remove_measurement(&self, measurement_id: String) -> Option<Measurement> {
     let res = self.measurements.remove(&measurement_id);
     if let Some((_, measurement)) = res {
-      let _ = self.compute_group(&measurement.get_group_id());
+      self
+        .compute_group(&measurement.get_group_id())
+        .expect("Failed to recompute group after measurement removal");
       return Some(measurement.get_measurement());
     }
     None

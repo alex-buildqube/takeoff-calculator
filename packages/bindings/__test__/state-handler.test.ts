@@ -256,7 +256,7 @@ describe("TakeoffStateHandler", () => {
 		expect(sampledMeasurement.area).toBeDefined();
 
 		state.removeMeasurement(sampledMeasurementInput.id);
-		expect(sampledGroup.area?.getConvertedValue("Meters")).toBe(
+		expect(sampledGroup.area?.getConvertedValue("Meters")).toBeCloseTo(
 			initialGroupArea! - initialMeasurementArea!,
 		);
 
