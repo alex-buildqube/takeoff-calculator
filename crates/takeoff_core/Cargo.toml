@@ -5,6 +5,7 @@ edition = "2024"
 
 
 [dependencies]
+delaunator = "1.0"
 napi = { workspace = true }
 napi-derive = { workspace = true }
 uom = { workspace = true }
