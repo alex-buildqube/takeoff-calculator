@@ -40,6 +40,7 @@ export declare class GroupWrapper {
 	get length(): UnitValue | null;
 	get points(): number | null;
 	get count(): number | null;
+	get group(): Group;
 }
 
 export declare class MeasurementWrapper {
@@ -97,6 +98,7 @@ export declare class TakeoffStateHandler {
 	 * * `Some(page)` - If the page was found and updated.
 	 */
 	upsertPage(page: Page): Page | null;
+	removePage(pageId: string): Page | null;
 	getGroup(groupId: string): GroupWrapper | null;
 	/**
 	 * Inserts or updates a group in the state.
@@ -112,6 +114,18 @@ export declare class TakeoffStateHandler {
 	 */
 	upsertGroup(group: Group): Group | null;
 	/**
+	 * Removes a group from the state.
+	 *
+	 * # Arguments
+	 *
+	 * * `group_id` - The id of the group to remove.
+	 *
+	 * # Returns
+	 * * `None` - If the group was not found.
+	 * * `Some(group)` - If the group was found and removed.
+	 */
+	removeGroup(groupId: string): Group | null;
+	/**
 	 * Inserts or updates a measurement in the state.
 	 *
 	 * # Arguments
@@ -124,6 +138,19 @@ export declare class TakeoffStateHandler {
 	 * * `Some(measurement)` - If the measurement was found and updated.
 	 */
 	upsertMeasurement(measurement: Measurement): Measurement | null;
+	/**
+	 * Removes a measurement from the state.
+	 *
+	 * # Arguments
+	 *
+	 * * `measurement_id` - The id of the measurement to remove.
+	 *
+	 * # Returns
+	 *
+	 * * `None` - If the measurement was not found.
+	 * * `Some(measurement)` - If the measurement was found and removed.
+	 */
+	removeMeasurement(measurementId: string): Measurement | null;
 	getMeasurement(measurementId: string): MeasurementWrapper | null;
 	/**
 	 * Inserts or updates a scale in the state.
@@ -138,6 +165,18 @@ export declare class TakeoffStateHandler {
 	 * * `Some(scale)` - If the scale was found and updated.
 	 */
 	upsertScale(scale: Scale): Scale | null;
+	/**
+	 * Removes a scale from the state.
+	 *
+	 * # Arguments
+	 *
+	 * * `scale_id` - The id of the scale to remove.
+	 *
+	 * # Returns
+	 * * `None` - If the scale was not found.
+	 * * `Some(scale)` - If the scale was found and removed.
+	 */
+	removeScale(scaleId: string): Scale | null;
 	/**
 	 * Get the measurements that are missing a scale.
 	 *

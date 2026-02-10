@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: <explanation> */
 import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
 import { type Measurement, type Scale, TakeoffStateHandler } from "../index.js";
@@ -5,8 +6,9 @@ import {
 	createManyGroups,
 	createManyMeasurements,
 	createManyScales,
+	executeCalls,
 	generatePageIds,
-	type UpsertHandler,
+	setupCalls,
 } from "../utils/testing-utils.js";
 
 describe("TakeoffStateHandler", () => {
@@ -110,7 +112,7 @@ describe("TakeoffStateHandler", () => {
 
 	test("should handle items in random order", () => {
 		const state = new TakeoffStateHandler();
-		const calls: UpsertHandler[] = [];
+
 		const pageIds = generatePageIds(25);
 		const scales = pageIds.flatMap((pageId) => createManyScales(1, { pageId }));
 		const groups = createManyGroups(10);
@@ -128,37 +130,13 @@ describe("TakeoffStateHandler", () => {
 				};
 			},
 		);
-		for (const scale of scales) {
-			calls.push({
-				type: "scale",
-				value: scale,
-			});
-		}
-		for (const group of groups) {
-			calls.push({
-				type: "group",
-				value: group,
-			});
-		}
-		for (const measurement of measurements) {
-			calls.push({
-				type: "measurement",
-				value: measurement,
-			});
-		}
-		for (const call of faker.helpers.shuffle(calls)) {
-			switch (call.type) {
-				case "scale":
-					state.upsertScale(call.value);
-					break;
-				case "group":
-					state.upsertGroup(call.value);
-					break;
-				case "measurement":
-					state.upsertMeasurement(call.value);
-					break;
-			}
-		}
+		const calls = setupCalls({
+			groups,
+			measurements,
+			scales,
+		});
+
+		executeCalls(state, faker.helpers.shuffle(calls));
 
 		expect(state.getMeasurementsMissingScale().length).toBe(0);
 		const sampledMeasurements = faker.helpers.arrayElements(measurements, 10);
@@ -235,6 +213,96 @@ describe("TakeoffStateHandler", () => {
 			}
 			expect(testGroup?.area).toBeDefined();
 			expect(testGroup?.length).toBeDefined();
+		}
+	});
+
+	test("should handle removing measurements", () => {
+		const state = new TakeoffStateHandler();
+
+		const pageIds = generatePageIds(25);
+		const scales = pageIds.flatMap((pageId) => createManyScales(1, { pageId }));
+		const groups = createManyGroups(10);
+
+		const measurements: Measurement[] = createManyMeasurements(1000).map(
+			(measurement) => {
+				const scale = faker.helpers.arrayElement(scales);
+				const group = faker.helpers.arrayElement(groups);
+				return {
+					...measurement,
+
+					scaleId: scale.id,
+					pageId: scale.pageId,
+					groupId: group.id,
+				};
+			},
+		);
+		const calls = setupCalls({
+			groups,
+			measurements,
+			scales,
+		});
+
+		executeCalls(state, faker.helpers.shuffle(calls));
+		const sampledMeasurementInput = faker.helpers.arrayElement(measurements);
+		const sampledMeasurement = state.getMeasurement(
+			sampledMeasurementInput.id,
+		)!;
+		const sampledGroup = state.getGroup(sampledMeasurementInput.groupId)!;
+		const initialGroupArea = sampledGroup.area?.getConvertedValue("Meters");
+		const initialMeasurementArea =
+			sampledMeasurement.area?.getConvertedValue("Meters");
+
+		expect(sampledGroup.area).toBeDefined();
+		expect(sampledMeasurement.area).toBeDefined();
+
+		state.removeMeasurement(sampledMeasurementInput.id);
+		expect(sampledGroup.area?.getConvertedValue("Meters")).toBeCloseTo(
+			initialGroupArea! - initialMeasurementArea!,
+		);
+
+		// remove the group
+		state.removeGroup(sampledGroup.id);
+		expect(state.getGroup(sampledGroup.id)).toBeNull();
+	});
+	test("should remove measurements when removing a group", () => {
+		const state = new TakeoffStateHandler();
+
+		const pageIds = generatePageIds(25);
+		const scales = pageIds.flatMap((pageId) => createManyScales(1, { pageId }));
+		const groups = createManyGroups(10);
+
+		const measurements: Measurement[] = createManyMeasurements(1000).map(
+			(measurement) => {
+				const scale = faker.helpers.arrayElement(scales);
+				const group = faker.helpers.arrayElement(groups);
+				return {
+					...measurement,
+
+					scaleId: scale.id,
+					pageId: scale.pageId,
+					groupId: group.id,
+				};
+			},
+		);
+		const calls = setupCalls({
+			groups,
+			measurements,
+			scales,
+		});
+
+		executeCalls(state, faker.helpers.shuffle(calls));
+		const sampledGroup = faker.helpers.arrayElement(groups);
+
+		const measurementsInGroup = state.getMeasurementsByGroupId(sampledGroup.id);
+		expect(measurementsInGroup.length).toBe(
+			measurements.filter((m) => m.groupId === sampledGroup.id).length,
+		);
+
+		state.removeGroup(sampledGroup.id);
+		expect(state.getMeasurementsByGroupId(sampledGroup.id).length).toBe(0);
+		expect(state.getGroup(sampledGroup.id)).toBeNull();
+		for (const measurement of measurementsInGroup) {
+			expect(state.getMeasurement(measurement.id)).toBeNull();
 		}
 	});
 });

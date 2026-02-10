@@ -1,5 +1,12 @@
 import { faker } from "@faker-js/faker";
-import type { Group, Measurement, Page, Scale, Unit } from "../index.js";
+import type {
+	Group,
+	Measurement,
+	Page,
+	Scale,
+	TakeoffStateHandler,
+	Unit,
+} from "../index.js";
 
 export const generatePageIds = (count: number): string[] => {
 	return Array.from({ length: count }, (_, i) => `page-${i}`);
@@ -129,3 +136,67 @@ export type UpsertHandler =
 			type: "page";
 			value: Page;
 	  };
+
+export const setupCalls = ({
+	pages = [],
+	groups = [],
+	measurements = [],
+	scales = [],
+}: {
+	pages?: Page[];
+	groups?: Group[];
+	measurements?: Measurement[];
+	scales?: Scale[];
+}): UpsertHandler[] => {
+	const calls: UpsertHandler[] = [];
+
+	for (const scale of scales) {
+		calls.push({
+			type: "scale",
+			value: scale,
+		});
+	}
+	for (const group of groups) {
+		calls.push({
+			type: "group",
+			value: group,
+		});
+	}
+	for (const measurement of measurements) {
+		calls.push({
+			type: "measurement",
+			value: measurement,
+		});
+	}
+	for (const page of pages) {
+		calls.push({
+			type: "page",
+			value: page,
+		});
+	}
+	return calls;
+};
+
+export const executeCalls = (
+	state: TakeoffStateHandler,
+	calls: UpsertHandler[],
+): void => {
+	for (const call of calls) {
+		switch (call.type) {
+			case "scale":
+				state.upsertScale(call.value);
+				break;
+			case "group":
+				state.upsertGroup(call.value);
+				break;
+			case "measurement":
+				state.upsertMeasurement(call.value);
+				break;
+			case "page":
+				state.upsertPage(call.value);
+				break;
+			default:
+				throw new Error(`Unknown call type: ${call}`);
+		}
+	}
+};

@@ -11,7 +11,7 @@
 		"test:rust": "turbo run cargo:test",
 		"test:all": "turbo run cargo:test test:local",
 		"cargo:test": "cargo test",
-		"clean": "git clean -fx",
+		"clean:main": "git clean -xdf node_modules .turbo .next target",
 		"lint": "biome check",
 		"check": "turbo run lint check:fmt check:clippy",
 		"check:fmt": "cargo fmt --check",

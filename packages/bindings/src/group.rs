@@ -132,4 +132,9 @@ impl GroupWrapper {
   pub fn get_count(&self) -> Option<f64> {
     *self.count.lock().unwrap()
   }
+
+  #[napi(getter)]
+  pub fn get_group(&self) -> Group {
+    self.group.clone()
+  }
 }
