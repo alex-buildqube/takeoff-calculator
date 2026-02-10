@@ -132,6 +132,7 @@ module.exports.TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
 module.exports.plus100 = __napiModule.exports.plus100;
 module.exports.plus200 = __napiModule.exports.plus200;
 module.exports.UnitValue = __napiModule.exports.UnitValue;
+module.exports.distance = __napiModule.exports.distance;
 module.exports.MeasurementType = __napiModule.exports.MeasurementType;
 module.exports.simplifyPolyline = __napiModule.exports.simplifyPolyline;
 module.exports.Unit = __napiModule.exports.Unit;

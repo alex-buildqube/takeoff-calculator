@@ -13,6 +13,11 @@ export declare class ContourWrapper {
 		cellSize?: number | undefined | null,
 	): VolumetricResult | null;
 	/**
+	 * Get the z value at a given x, y coordinate.
+	 * Returns None if the surface mesh is not available (e.g. contour conversion failed).
+	 */
+	getZAt(x: number, y: number): number | null;
+	/**
 	 * Get scatter data for the contour.
 	 * Returns None if the surface mesh is not available (e.g. contour conversion failed).
 	 *
@@ -175,6 +180,11 @@ export interface ContourPointOfInterestInput {
 	elevation: number;
 	point: Point;
 }
+
+/** Calculate distance between two points */
+export declare function distance(
+	points: [Point, Point] | [Point3D, Point3D],
+): number;
 
 export interface Group {
 	id: string;
