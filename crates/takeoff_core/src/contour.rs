@@ -232,16 +232,8 @@ impl ContourInput {
       .iter()
       .map(|point| GeoPoint::new(point.point.x, point.point.y))
       .collect();
-    let mut geometries: Vec<Geometry<f64>> = lines
-      .into_iter()
-      .map(Geometry::LineString)
-      .collect();
-    geometries.extend(
-      points_of_interest
-        .into_iter()
-        .map(Geometry::Point),
-    );
-    
+    let mut geometries: Vec<Geometry<f64>> = lines.into_iter().map(Geometry::LineString).collect();
+    geometries.extend(points_of_interest.into_iter().map(Geometry::Point));
 
     GeometryCollection::new_from(geometries)
   }
