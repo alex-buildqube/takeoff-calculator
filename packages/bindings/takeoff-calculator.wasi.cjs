@@ -108,6 +108,7 @@ const { instance: __napiInstance, module: __wasiModule, napiModule: __napiModule
   },
 })
 module.exports = __napiModule.exports
+module.exports.ContourWrapper = __napiModule.exports.ContourWrapper
 module.exports.GroupWrapper = __napiModule.exports.GroupWrapper
 module.exports.MeasurementWrapper = __napiModule.exports.MeasurementWrapper
 module.exports.TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler

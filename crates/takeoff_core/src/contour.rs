@@ -211,6 +211,23 @@ impl ContourInput {
   pub fn to_surface_mesh(&self) -> Result<SurfaceMesh, SurfaceMeshError> {
     SurfaceMesh::try_from(self.clone())
   }
+
+  /// Get contour bounding box
+  pub fn bounding_box(&self) -> Option<((f64, f64), (f64, f64))> {
+    let mut min_x = f64::MAX;
+    let mut max_x = f64::MIN;
+    let mut min_y = f64::MAX;
+    let mut max_y = f64::MIN;
+    for line in &self.lines {
+      for point in &line.points {
+        min_x = min_x.min(point.x);
+        max_x = max_x.max(point.x);
+        min_y = min_y.min(point.y);
+        max_y = max_y.max(point.y);
+      }
+    }
+    Some(((min_x, min_y), (max_x, max_y)))
+  }
 }
 
 #[cfg(test)]

@@ -1,5 +1,6 @@
 #![deny(clippy::all)]
 
+pub mod contour;
 pub mod group;
 pub mod measurement;
 pub mod state;

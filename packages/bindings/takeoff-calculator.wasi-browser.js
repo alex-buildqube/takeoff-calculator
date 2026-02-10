@@ -59,6 +59,7 @@ const {
   },
 });
 export default __napiModule.exports;
+export const ContourWrapper = __napiModule.exports.ContourWrapper;
 export const GroupWrapper = __napiModule.exports.GroupWrapper;
 export const MeasurementWrapper = __napiModule.exports.MeasurementWrapper;
 export const TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
