@@ -3,17 +3,11 @@
  * @type {import('lint-staged').Configuration}
  */
 export default {
-    "*.@(js|ts|tsx)": [
-        "oxlint --fix"
-    ],
-    "*.@(js|ts|tsx|yml|yaml|md|json)": [
-        "prettier --write"
-    ],
-    "*.toml": [
-        "taplo format"
-    ],
-    "*.rs": (_files) => [
-        "turbo run format:rs format:fix",
-        "cargo clippy --workspace --fix --allow-dirty"
-    ],
-}
+	"*.rs": (_files) => [
+		"pnpm build",
+		"turbo run format:rs format:fix",
+		"cargo clippy --workspace --fix --allow-dirty",
+	],
+	"*.@(js|ts|tsx|yml|yaml|md|json)": ["pnpm exec biome check --write"],
+	"*.toml": ["taplo format"],
+};

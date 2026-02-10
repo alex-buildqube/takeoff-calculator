@@ -45,12 +45,8 @@ jobs:
           components: clippy, rustfmt
       - name: Install dependencies
         run: pnpm install
-      - name: ESLint
-        run: pnpm lint
-      - name: Cargo fmt
-        run: cargo fmt -- --check
-      - name: Clippy
-        run: cargo clippy --workspace
+      - name: Check
+        run: pnpm check
 
   rust-test:
     name: Rust test

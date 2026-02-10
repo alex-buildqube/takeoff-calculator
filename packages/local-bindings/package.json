@@ -1,0 +1,11 @@
+{
+	"name": "local-bindings",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"@build-qube/takeoff-calculator": "workspace:*"
+	},
+	"main": "index.ts",
+	"types": "index.ts",
+	"browser": "browser.js"
+}

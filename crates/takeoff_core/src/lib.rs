@@ -1,3 +1,4 @@
+pub mod contour;
 pub mod coords;
 pub mod group;
 pub mod measurement;
@@ -6,3 +7,4 @@ pub mod scale;
 pub mod state;
 pub mod unit;
 pub mod utils;
+pub mod volume;
