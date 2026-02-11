@@ -36,7 +36,9 @@ pub enum Measurement {
 impl Measurement {
   /// Validate that the measurement has valid geometry.
   ///
-  /// Returns an error if:
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if:
   /// - Polygon has fewer than 3 points
   /// - Polyline has fewer than 2 points
   /// - Rectangle has invalid or identical corner points
@@ -101,9 +103,13 @@ impl Measurement {
     }
   }
 
-  /// Convert the measurement to a polygon
+  /// Convert the measurement to a polygon.
   ///
-  /// Returns an error if the geometry is invalid (e.g., polygon with < 3 points).
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if:
+  /// - The geometry is invalid (e.g., polygon with < 3 points)
+  /// - The measurement type cannot be converted to a polygon
   pub fn to_polygon(&self) -> TakeoffResult<GeoPolygon<f64>> {
     self.validate()?;
     match self {
@@ -123,9 +129,13 @@ impl Measurement {
     }
   }
 
-  /// Convert the measurement to a line string
+  /// Convert the measurement to a line string.
   ///
-  /// Returns an error if the geometry is invalid (e.g., polyline with < 2 points).
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if:
+  /// - The geometry is invalid (e.g., polyline with < 2 points)
+  /// - The measurement type cannot be converted to a line string
   pub fn to_line_string(&self) -> TakeoffResult<LineString<f64>> {
     self.validate()?;
     match self {
@@ -140,6 +150,16 @@ impl Measurement {
     }
   }
 
+  /// Converts the measurement to a single point.
+  ///
+  /// For polygons and polylines, returns the first point.
+  /// For counts and rectangles, returns the single point or first corner.
+  ///
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if:
+  /// - The polygon has no points
+  /// - The polyline has no points
   pub fn to_point(&self) -> TakeoffResult<Point> {
     match self {
       Measurement::Count { points, .. } => Ok(points.0),
@@ -147,20 +167,35 @@ impl Measurement {
         if points.is_empty() {
           Err(TakeoffError::empty_geometry("polygon has no points"))
         } else {
-          Ok(*points.first().unwrap())
+          // Safe: we've already checked that points is not empty
+          Ok(
+            *points
+              .first()
+              .expect("BUG: points.is_empty() was checked above"),
+          )
         }
       }
       Measurement::Polyline { points, .. } => {
         if points.is_empty() {
           Err(TakeoffError::empty_geometry("polyline has no points"))
         } else {
-          Ok(*points.first().unwrap())
+          // Safe: we've already checked that points is not empty
+          Ok(
+            *points
+              .first()
+              .expect("BUG: points.is_empty() was checked above"),
+          )
         }
       }
       Measurement::Rectangle { points, .. } => Ok(points.0),
     }
   }
 
+  /// Convert the measurement to a geometry object.
+  ///
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if the measurement geometry is invalid.
   pub fn to_geometry(&self) -> TakeoffResult<Geometry<f64>> {
     self.validate()?;
     match self {
@@ -171,6 +206,12 @@ impl Measurement {
     }
   }
 
+  /// Get the centroid (geometric center) of the measurement.
+  ///
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::EmptyGeometry`] if the centroid cannot be computed
+  /// (e.g., for empty geometry).
   pub fn get_centroid(&self) -> TakeoffResult<Point> {
     let geometry = self.to_geometry()?;
     let centroid = geometry.centroid();

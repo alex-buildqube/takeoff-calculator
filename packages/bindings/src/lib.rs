@@ -4,6 +4,7 @@ pub mod contour;
 pub mod group;
 pub mod measurement;
 pub mod state;
+pub mod utils;
 use napi_derive::napi;
 
 /// Add 100 to the input

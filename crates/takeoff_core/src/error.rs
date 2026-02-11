@@ -55,6 +55,20 @@ pub enum TakeoffError {
   #[error("all points are collinear; cannot create triangulated surface")]
   SurfaceMeshCollinearPoints,
 
+  // System Errors
+  /// A mutex or lock was poisoned (a thread panicked while holding the lock).
+  ///
+  /// This error is returned when:
+  /// - A mutex lock operation fails because another thread panicked while holding the lock
+  /// - Internal synchronization state is corrupted
+  ///
+  /// This typically indicates a programming error or unexpected panic in concurrent code.
+  #[error("mutex lock poisoned: {resource}")]
+  PoisonError {
+    /// The name of the resource that was locked (e.g., "area", "scale", "measurement")
+    resource: String,
+  },
+
   // Catchall Error
   #[error("an unknown error occurred: {message}")]
   UnknownError { message: String },
@@ -79,6 +93,13 @@ impl TakeoffError {
   pub fn unknown_unit(unit: impl Into<String>) -> Self {
     Self::UnknownUnit { unit: unit.into() }
   }
+
+  /// Create a `PoisonError` error for a poisoned mutex lock.
+  pub fn poison_error(resource: impl Into<String>) -> Self {
+    Self::PoisonError {
+      resource: resource.into(),
+    }
+  }
 }
 
 impl From<TakeoffError> for NapiError {
@@ -87,18 +108,15 @@ impl From<TakeoffError> for NapiError {
       TakeoffError::EmptyGeometry { message } => NapiError::new(Status::InvalidArg, message),
       TakeoffError::InvalidScale { message } => NapiError::new(Status::InvalidArg, message),
       TakeoffError::UnknownUnit { unit } => NapiError::new(Status::InvalidArg, unit),
-      TakeoffError::SurfaceMeshTooFewPoints { .. } => NapiError::new(
-        Status::InvalidArg,
-        error.to_string(),
-        // format!(
-        //   "too few points for triangulation: {} (need at least 3)",
-        //   count
-        // ),
-      ),
-      TakeoffError::SurfaceMeshCollinearPoints => NapiError::new(
-        Status::InvalidArg,
-        error.to_string(),
-        // "all points are collinear; cannot create triangulated surface",
+      TakeoffError::SurfaceMeshTooFewPoints { .. } => {
+        NapiError::new(Status::InvalidArg, error.to_string())
+      }
+      TakeoffError::SurfaceMeshCollinearPoints => {
+        NapiError::new(Status::InvalidArg, error.to_string())
+      }
+      TakeoffError::PoisonError { resource } => NapiError::new(
+        Status::GenericFailure,
+        format!("mutex lock poisoned: {}", resource),
       ),
       TakeoffError::UnknownError { message } => NapiError::new(Status::InvalidArg, message),
     }
@@ -109,6 +127,14 @@ impl From<NapiError> for TakeoffError {
   fn from(error: NapiError) -> Self {
     TakeoffError::UnknownError {
       message: error.to_string(),
+    }
+  }
+}
+
+impl<T> From<std::sync::PoisonError<T>> for TakeoffError {
+  fn from(error: std::sync::PoisonError<T>) -> Self {
+    TakeoffError::PoisonError {
+      resource: "unknown".to_string(),
     }
   }
 }
@@ -135,6 +161,11 @@ mod tests {
     let serialized = serde_json::to_string(&err).unwrap();
     assert!(serialized.contains("unknownUnit"));
     assert!(serialized.contains("kilometers"));
+
+    let err = TakeoffError::poison_error("scale");
+    let serialized = serde_json::to_string(&err).unwrap();
+    assert!(serialized.contains("poisonError"));
+    assert!(serialized.contains("scale"));
   }
 
   #[test]
@@ -150,6 +181,10 @@ mod tests {
     let json = r#"{"type":"unknownUnit","unit":"kilometers"}"#;
     let err: TakeoffError = serde_json::from_str(json).unwrap();
     assert!(matches!(err, TakeoffError::UnknownUnit { .. }));
+
+    let json = r#"{"type":"poisonError","resource":"measurement"}"#;
+    let err: TakeoffError = serde_json::from_str(json).unwrap();
+    assert!(matches!(err, TakeoffError::PoisonError { resource } if resource == "measurement"));
   }
 
   #[test]
@@ -180,5 +215,10 @@ mod tests {
 
     assert!(display.contains("all points are collinear"));
     assert!(display.contains("cannot create triangulated surface"));
+
+    let err = TakeoffError::poison_error("scale");
+    let display = format!("{}", err);
+    assert!(display.contains("mutex lock poisoned"));
+    assert!(display.contains("scale"));
   }
 }

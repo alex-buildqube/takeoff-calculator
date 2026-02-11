@@ -1,11 +1,12 @@
 use crate::measurement::MeasurementWrapper;
 use crate::state::TakeoffStateHandler;
+use crate::utils::lock_mutex;
 use anyhow::Result;
 use napi_derive::napi;
 use std::sync::{Arc, Mutex};
+use takeoff_core::error::TakeoffResult;
+use takeoff_core::group::Group;
 use takeoff_core::unit::UnitValue;
-use takeoff_core::{error::TakeoffResult, group::Group};
-
 use uom::si::f32::{Area, Length};
 
 #[napi]
@@ -45,11 +46,16 @@ impl GroupWrapper {
   }
 
   fn calculate_length(&self, measurements: &[MeasurementWrapper]) -> TakeoffResult<Option<Length>> {
-    let length = measurements
-      .iter()
-      .filter_map(|measurement| measurement.get_length_value().unwrap())
-      .reduce(|a, b| a + b);
-    Ok(length)
+    let mut length_opt = None;
+    for measurement in measurements {
+      if let Ok(Some(length)) = measurement.get_length_value() {
+        length_opt = Some(match length_opt {
+          Some(acc) => acc + length,
+          None => length,
+        });
+      }
+    }
+    Ok(length_opt)
   }
 
   fn calculate_points(&self, measurements: &[MeasurementWrapper]) -> Option<f64> {
@@ -64,25 +70,33 @@ impl GroupWrapper {
     Some(measurements.len() as f64)
   }
 
+  /// Recompute all measurements for this group.
+  ///
+  /// # Errors
+  ///
+  /// Returns an error if:
+  /// - Mutex lock fails (poisoned mutex)
+  /// - Area calculation fails
+  /// - Length calculation fails
   pub fn recompute_measurements(&self) -> Result<()> {
     let measurements = self
       .state
       .get_measurements_by_group_id(self.id().to_string());
 
     {
-      *self.area.lock().unwrap() = self.calculate_area(&measurements)?;
+      *lock_mutex(self.area.lock(), "area")? = self.calculate_area(&measurements)?;
     }
 
     {
-      *self.length.lock().unwrap() = self.calculate_length(&measurements)?;
+      *lock_mutex(self.length.lock(), "length")? = self.calculate_length(&measurements)?;
     }
 
     {
-      *self.points.lock().unwrap() = self.calculate_points(&measurements);
+      *lock_mutex(self.points.lock(), "points")? = self.calculate_points(&measurements);
     }
 
     {
-      *self.count.lock().unwrap() = self.calculate_count(&measurements);
+      *lock_mutex(self.count.lock(), "count")? = self.calculate_count(&measurements);
     }
 
     Ok(())
@@ -95,29 +109,47 @@ impl GroupWrapper {
   }
 
   #[napi(getter)]
+  /// Get the area for this group.
+  ///
+  /// Returns `None` if the area has not been computed or if the mutex is poisoned.
   pub fn get_area(&self) -> Option<UnitValue> {
-    if let Some(area) = self.area.lock().unwrap().as_ref() {
-      return Some(UnitValue::from_area(*area));
+    if let Ok(area) = self.area.lock() {
+      if let Some(area) = area.as_ref() {
+        return Some(UnitValue::from_area(*area));
+      }
     }
     None
   }
 
   #[napi(getter)]
+  /// Get the length for this group.
+  ///
+  /// Returns `None` if the length has not been computed or if the mutex is poisoned.
   pub fn get_length(&self) -> Option<UnitValue> {
-    if let Some(length) = self.length.lock().unwrap().as_ref() {
-      return Some(UnitValue::from_length(*length));
+    if let Ok(length) = lock_mutex(self.length.lock(), "length") {
+      if let Some(length) = length.as_ref() {
+        return Some(UnitValue::from_length(*length));
+      }
     }
     None
   }
 
   #[napi(getter)]
+  /// Get the points count for this group.
+  ///
+  /// Returns `None` if the points count has not been computed or if the mutex is poisoned.
   pub fn get_points(&self) -> Option<f64> {
-    *self.points.lock().unwrap()
+    lock_mutex(self.points.lock(), "points")
+      .ok()
+      .and_then(|p| *p)
   }
 
   #[napi(getter)]
+  /// Get the count for this group.
+  ///
+  /// Returns `None` if the count has not been computed or if the mutex is poisoned.
   pub fn get_count(&self) -> Option<f64> {
-    *self.count.lock().unwrap()
+    lock_mutex(self.count.lock(), "count").ok().and_then(|c| *c)
   }
 
   #[napi(getter)]

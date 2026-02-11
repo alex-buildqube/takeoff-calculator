@@ -179,6 +179,11 @@ impl TryFrom<ContourInput> for SurfaceMesh {
 
 impl ContourInput {
   /// Convert contour input to a triangulated 3D surface mesh.
+  ///
+  /// # Errors
+  ///
+  /// Returns [`TakeoffError::SurfaceMeshTooFewPoints`] if there are fewer than 3 points.
+  /// Returns [`TakeoffError::SurfaceMeshCollinearPoints`] if all points are collinear.
   pub fn to_surface_mesh(&self) -> TakeoffResult<SurfaceMesh> {
     SurfaceMesh::try_from(self.clone())
   }

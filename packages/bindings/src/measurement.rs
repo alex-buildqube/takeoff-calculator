@@ -10,6 +10,9 @@ use uom::si::f32::{Area, Length};
 use crate::state::TakeoffStateHandler;
 
 use napi::Result;
+
+use crate::utils::lock_mutex;
+
 #[napi]
 #[derive(Debug, Clone)]
 pub struct MeasurementWrapper {
@@ -44,8 +47,10 @@ impl MeasurementWrapper {
   }
 
   pub fn set_measurement(&self, measurement: Measurement) {
-    *self.measurement.lock().unwrap() = measurement;
-    self.recompute_measurements();
+    *lock_mutex(self.measurement.lock(), "measurement")
+      .expect("BUG: measurement mutex should not be poisoned") = measurement;
+    // Ignore recomputation errors - they will be handled when values are accessed
+    let _ = self.recompute_measurements();
   }
 
   #[napi(getter)]
@@ -58,7 +63,8 @@ impl MeasurementWrapper {
   }
 
   fn calculate_area(&self) -> TakeoffResult<Option<Area>> {
-    if let Some(scale) = self.scale.lock().unwrap().as_ref() {
+    let scale_guard = lock_mutex(self.scale.lock(), "scale")?;
+    if let Some(scale) = scale_guard.as_ref() {
       let scale_ratio = scale.ratio()?;
 
       let raw_area = self.raw_area()?;
@@ -72,7 +78,9 @@ impl MeasurementWrapper {
 
   #[napi(getter)]
   pub fn get_measurement(&self) -> Measurement {
-    self.measurement.lock().unwrap().clone()
+    lock_mutex(self.measurement.lock(), "measurement")
+      .expect("BUG: measurement mutex should not be poisoned")
+      .clone()
   }
 
   #[napi(getter)]
@@ -84,18 +92,16 @@ impl MeasurementWrapper {
   }
 
   pub fn get_area_value(&self) -> TakeoffResult<Option<Area>> {
-    let mut area = self.area.lock().unwrap();
+    let mut area = lock_mutex(self.area.lock(), "area")?;
     if area.is_none() {
       *area = self.calculate_area()?;
-      Ok(*area)
-    } else {
-      Ok(*area)
     }
+    Ok(*area)
   }
 
   pub fn calculate_scale(&self) -> Option<Scale> {
     let mut current_scale: Option<Scale> = None;
-    let measurement = self.measurement.lock().unwrap();
+    let measurement = lock_mutex(self.measurement.lock(), "measurement").ok()?;
     let geometry = match measurement.to_geometry() {
       Ok(geom) => geom,
       Err(_) => return None, // Invalid geometry, cannot determine scale
@@ -126,7 +132,7 @@ impl MeasurementWrapper {
   }
 
   pub fn get_length_value(&self) -> TakeoffResult<Option<Length>> {
-    let mut length = self.length.lock().unwrap();
+    let mut length = lock_mutex(self.length.lock(), "length")?;
     if length.is_none() {
       *length = self.calculate_length()?;
     }
@@ -134,7 +140,8 @@ impl MeasurementWrapper {
   }
 
   fn calculate_length(&self) -> TakeoffResult<Option<Length>> {
-    if let Some(scale) = self.scale.lock().unwrap().as_ref() {
+    let scale_guard = lock_mutex(self.scale.lock(), "scale")?;
+    if let Some(scale) = scale_guard.as_ref() {
       let scale_ratio = scale.ratio()?;
 
       let raw_perimeter = self.raw_perimeter()?;
@@ -164,49 +171,63 @@ impl MeasurementWrapper {
 
   pub fn recompute_measurements(&self) -> TakeoffResult<()> {
     let area = self.calculate_area();
-    *self.area.lock().unwrap() = area?;
+    *lock_mutex(self.area.lock(), "area")? = area?;
 
     let length = self.calculate_length();
-    *self.length.lock().unwrap() = length?;
+    *lock_mutex(self.length.lock(), "length")? = length?;
 
+    // Ignore recomputation errors - they will be handled when group values are accessed
     let _ = self.state.compute_group(&self.get_group_id());
     Ok(())
   }
 
   pub fn set_scale(&self, scale: Scale) {
-    *self.scale.lock().unwrap() = Some(scale);
-    self.recompute_measurements();
+    *lock_mutex(self.scale.lock(), "scale").expect("BUG: scale mutex should not be poisoned") =
+      Some(scale);
+    // Ignore recomputation errors - they will be handled when values are accessed
+    let _ = self.recompute_measurements();
   }
 
   #[napi(getter)]
   pub fn get_scale(&self) -> Option<Scale> {
-    self.scale.lock().unwrap().clone()
+    lock_mutex(self.scale.lock(), "scale")
+      .ok()
+      .and_then(|s| s.clone())
   }
 
   #[napi(getter)]
   pub fn id(&self) -> String {
-    self.measurement.lock().unwrap().id().to_string()
+    lock_mutex(self.measurement.lock(), "measurement")
+      .expect("BUG: measurement mutex should not be poisoned")
+      .id()
+      .to_string()
   }
 
   #[napi(getter)]
   pub fn page_id(&self) -> String {
-    self.measurement.lock().unwrap().page_id().to_string()
+    lock_mutex(self.measurement.lock(), "measurement")
+      .expect("BUG: measurement mutex should not be poisoned")
+      .page_id()
+      .to_string()
   }
 
   #[napi(getter)]
   pub fn get_group_id(&self) -> String {
-    self.measurement.lock().unwrap().group_id().to_string()
+    lock_mutex(self.measurement.lock(), "measurement")
+      .expect("BUG: measurement mutex should not be poisoned")
+      .group_id()
+      .to_string()
   }
 
   #[napi(getter)]
   pub fn raw_area(&self) -> Result<f64> {
-    let area = self.measurement.lock().unwrap().pixel_area()?;
+    let area = lock_mutex(self.measurement.lock(), "measurement")?.pixel_area()?;
     Ok(area)
   }
 
   #[napi(getter)]
   pub fn raw_perimeter(&self) -> Result<f64> {
-    let perimeter = self.measurement.lock().unwrap().pixel_perimeter()?;
+    let perimeter = lock_mutex(self.measurement.lock(), "measurement")?.pixel_perimeter()?;
     Ok(perimeter)
   }
 }

@@ -2,7 +2,11 @@
 /* eslint-disable */
 export declare class ContourWrapper {
 	constructor(contour: ContourInput);
-	/** Get the surface points for the contour. */
+	/**
+	 * Get the surface points for the contour.
+	 *
+	 * Returns `None` if the surface mesh is not available or if the mutex is poisoned.
+	 */
 	getSurfacePoints(): Array<Point3D> | null;
 	/**
 	 * Compute cut/fill volume against a reference surface.
@@ -36,9 +40,29 @@ export declare class ContourWrapper {
 export declare class GroupWrapper {
 	/** Get the id of the group. */
 	get id(): string;
+	/**
+	 * Get the area for this group.
+	 *
+	 * Returns `None` if the area has not been computed or if the mutex is poisoned.
+	 */
 	get area(): UnitValue | null;
+	/**
+	 * Get the length for this group.
+	 *
+	 * Returns `None` if the length has not been computed or if the mutex is poisoned.
+	 */
 	get length(): UnitValue | null;
+	/**
+	 * Get the points count for this group.
+	 *
+	 * Returns `None` if the points count has not been computed or if the mutex is poisoned.
+	 */
 	get points(): number | null;
+	/**
+	 * Get the count for this group.
+	 *
+	 * Returns `None` if the count has not been computed or if the mutex is poisoned.
+	 */
 	get count(): number | null;
 	get group(): Group;
 }

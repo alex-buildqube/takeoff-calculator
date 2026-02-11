@@ -1,4 +1,5 @@
 use crate::state::TakeoffStateHandler;
+use crate::utils::lock_mutex;
 use anyhow::Result;
 use napi_derive::napi;
 use std::sync::{Arc, Mutex};
@@ -29,7 +30,7 @@ impl ContourWrapper {
 
   fn initialize_surface_mesh(&self) -> Result<()> {
     let surface_mesh = self.contour.to_surface_mesh()?;
-    *self._surface_mesh.lock().unwrap() = Some(surface_mesh);
+    *lock_mutex(self._surface_mesh.lock(), "surface_mesh")? = Some(surface_mesh);
     Ok(())
   }
 
@@ -39,11 +40,15 @@ impl ContourWrapper {
   }
 
   /// Get the surface points for the contour.
+  ///
+  /// Returns `None` if the surface mesh is not available or if the mutex is poisoned.
   #[napi]
   pub fn get_surface_points(&self) -> Option<Vec<Point3D>> {
-    if let Some(surface_mesh) = self._surface_mesh.lock().unwrap().as_ref() {
-      return Some(surface_mesh.vertices.clone());
-    };
+    if let Ok(surface_mesh) = lock_mutex(self._surface_mesh.lock(), "surface_mesh") {
+      if let Some(surface_mesh) = surface_mesh.as_ref() {
+        return Some(surface_mesh.vertices.clone());
+      }
+    }
     None
   }
 
@@ -55,7 +60,7 @@ impl ContourWrapper {
     reference: ReferenceSurfaceInput,
     cell_size: Option<f64>,
   ) -> Option<VolumetricResult> {
-    let mesh = self._surface_mesh.lock().ok()?;
+    let mesh = lock_mutex(self._surface_mesh.lock(), "surface_mesh").ok()?;
     let mesh = mesh.as_ref()?;
     let reference = ReferenceSurface::from(reference);
     Some(mesh.volume_against(&reference, cell_size))
@@ -65,7 +70,7 @@ impl ContourWrapper {
   /// Returns None if the surface mesh is not available (e.g. contour conversion failed).
   #[napi]
   pub fn get_z_at(&self, x: f64, y: f64) -> Option<f64> {
-    let mesh = self._surface_mesh.lock().ok()?;
+    let mesh = lock_mutex(self._surface_mesh.lock(), "surface_mesh").ok()?;
     let mesh = mesh.as_ref()?;
     mesh.z_at(x, y)
   }
@@ -89,7 +94,7 @@ impl ContourWrapper {
     let step = step as usize;
 
     let bounding_box = self.contour.bounding_box()?;
-    let mesh_guard = self._surface_mesh.lock().ok()?;
+    let mesh_guard = lock_mutex(self._surface_mesh.lock(), "surface_mesh").ok()?;
     let surface_mesh = mesh_guard.as_ref()?;
 
     let (min_x, min_y) = bounding_box.0;

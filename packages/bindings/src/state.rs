@@ -248,9 +248,8 @@ impl TakeoffStateHandler {
   pub fn remove_measurement(&self, measurement_id: String) -> Option<Measurement> {
     let res = self.measurements.remove(&measurement_id);
     if let Some((_, measurement)) = res {
-      self
-        .compute_group(&measurement.get_group_id())
-        .expect("Failed to recompute group after measurement removal");
+      // Ignore recomputation errors - they will be handled when group values are accessed
+      let _ = self.compute_group(&measurement.get_group_id());
       return Some(measurement.get_measurement());
     }
     None
@@ -336,7 +335,8 @@ impl TakeoffStateHandler {
     if let Some(group) = group {
       std::thread::scope(|s| {
         s.spawn(|| {
-          group.recompute_measurements().unwrap();
+          // Ignore recomputation errors - they will be handled when group values are accessed
+          let _ = group.recompute_measurements();
         });
       });
     }
