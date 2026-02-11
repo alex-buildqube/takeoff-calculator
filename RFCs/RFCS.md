@@ -16,6 +16,7 @@ Implementation proceeds **strictly in numerical order**. Each RFC is fully imple
 | 6 | RFC-006 | Performance benchmark suite | Medium |
 | 7 | RFC-007 | Accuracy validation (golden / baseline tests) | Medium |
 | 8 | RFC-008 | Additional units (optional / could-have) | Low |
+| 9 | RFC-009 | Centroid reposition (measurement move by centroid) | Low–Medium |
 
 ---
 
@@ -28,7 +29,9 @@ RFC-001 (Errors)
     │         │
     │         ├──► RFC-003 (Conversion + Measurement kinds)
     │         │         │
-    │         │         └──► RFC-004 (Groups & aggregates)
+    │         │         ├──► RFC-004 (Groups & aggregates)
+    │         │         │         │
+    │         │         └──► RFC-009 (Centroid reposition)
     │         │                   │
     │         └───────────────────┼──► RFC-005 (Node + WASI bindings)
     │                             │
@@ -51,6 +54,7 @@ RFC-008 (Additional units) — depends on RFC-002; optional for v1.
 | RFC-006 | RFC-001–004 (core) | — |
 | RFC-007 | RFC-001–004 (core) | — |
 | RFC-008 | RFC-002 | — (optional) |
+| RFC-009 | RFC-001, RFC-002, RFC-003 | — (extends bindings surface when implemented) |
 
 ---
 
@@ -72,6 +76,9 @@ RFC-008 (Additional units) — depends on RFC-002; optional for v1.
 ### Phase 4: Optional
 - **RFC-008**: Additional units or unit systems (could-have; defer until demand).
 
+### Phase 5: UX support
+- **RFC-009**: Centroid reposition — given measurement + new centroid, return updated measurement (drag-to-move in consumer apps).
+
 ---
 
 ## File index
@@ -86,3 +93,4 @@ RFC-008 (Additional units) — depends on RFC-002; optional for v1.
 | RFC-006 | `RFC-006-Performance-Benchmark-Suite.md` | `implementation-prompt-RFC-006.md` |
 | RFC-007 | `RFC-007-Accuracy-Validation.md` | `implementation-prompt-RFC-007.md` |
 | RFC-008 | `RFC-008-Additional-Units.md` | `implementation-prompt-RFC-008.md` |
+| RFC-009 | `RFC-009-Centroid-Reposition.md` | `implementation-prompt-RFC-009.md` |

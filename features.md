@@ -23,10 +23,10 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 |-------------|-------|
 | Must have   | 6     |
 | Should have | 4     |
-| Could have  | 1     |
+| Could have  | 2     |
 | Won't have  | 1     |
 
-**By category:** Conversion & measurement: 2 | Scale & units: 4 | Groups & aggregates: 1 | API & bindings: 2 | Quality & testing: 2 | Future / deferred: 1
+**By category:** Conversion & measurement: 2 | Scale & units: 4 | Groups & aggregates: 1 | API & bindings: 3 | Quality & testing: 2 | Future / deferred: 1
 
 ---
 
@@ -37,7 +37,7 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 | Conversion & measurement | F1, F7        |
 | Scale & units          | F2, F3, F6, F8   |
 | Groups & aggregates    | F4               |
-| API & bindings         | F5, F10          |
+| API & bindings         | F5, F10, F13     |
 | Quality & testing      | F11, F12         |
 | Future / deferred      | F9               |
 
@@ -49,7 +49,7 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 |-------------|--------------------|
 | Must have   | F1, F2, F3, F4, F5, F10 |
 | Should have | F6, F7, F11, F12   |
-| Could have  | F8                 |
+| Could have  | F8, F13           |
 | Won't have  | F9                 |
 
 ---
@@ -206,6 +206,16 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 - **Edge cases / special handling:** No silent wrong values; all error paths covered in tests.
 - **Complexity:** Medium
 - **Integrations / risks:** Align error shapes between Rust, NAPI, and WASI.
+
+#### F13: Reposition measurement by centroid
+
+- **Priority:** Could have
+- **Category:** API & bindings
+- **Persona:** App developer
+- **Description:** Given a measurement and a new centroid, return the measurement (or its points) translated so its centroid is at the new point, enabling drag-to-move in consumer apps.
+- **Acceptance criteria:** API accepts measurement + point; returns updated measurement whose centroid equals the given point; area/length/count unchanged. Empty geometry returns existing error types.
+- **Technical notes:** RFC-009. Pure translation in core; expose from Node and WASI bindings.
+- **Complexity:** Low
 
 ---
 

@@ -1,7 +1,5 @@
 # Implementation Prompt: RFC-008 – Additional Units (Optional / Could-Have)
 
-**Status: Complete**
-
 Implement **RFC-008: Additional Units (Optional / Could-Have)** in strict accordance with the RFC document.
 
 ## Purpose

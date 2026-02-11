@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-008
 - **Title**: Additional Units (Optional / Could-Have)
+- **Status**: Completed
 
 ## Summary
 

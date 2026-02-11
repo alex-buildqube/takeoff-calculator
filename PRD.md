@@ -112,7 +112,7 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 ### API surface (high-level)
 
 - **Scales:** Create, list; ratio + unit.
-- **Measurements:** Create polygon/polyline/rectangle/count; attach scale; get length/area/volume in unit.
+- **Measurements:** Create polygon/polyline/rectangle/count; attach scale; get length/area/volume in unit; **reposition by centroid:** given a measurement and a new centroid, return the measurement (or its points) translated so its centroid is at the new point (supports e.g. drag-to-move in consumer apps).
 - **Groups:** Create, add measurements; get aggregates (total area, total length, point count, item count).
 - **Errors:** Typed error returns (e.g. `InvalidScale`, `UnknownUnit`, `EmptyGeometry`).
 
@@ -134,7 +134,7 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 
 1. Developer defines groups (e.g. "Room A", "Walls", "Floor").
 2. Developer creates multiple measurements and assigns them to groups.
-3. Developer sets scale(s) per measurement (groups inherit from measurements).
+3. Developer sets scale(s) per page (measurements inherit from page).
 4. Developer requests group totals: area, length, count, point count.
 5. Backend recomputes aggregates when measurements or scales change.
 
@@ -143,7 +143,7 @@ The **Takeoff Calculator** is a Rust-based backend that converts pixel-defined g
 ### 3. Multi-scale takeoff
 
 1. Developer has multiple scales (e.g. plan view vs detail view).
-2. Developer creates measurements in different views and assigns the appropriate scale to each.
+2. Developer creates measurements in different pages and backend assigns the appropriate scale to each.
 3. Developer reads all values in a single output unit.
 4. Backend converts each measurement using its scale and normalizes to the chosen unit.
 

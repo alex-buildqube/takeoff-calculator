@@ -20,7 +20,6 @@ pub struct TakeoffStateHandler {
 
 #[napi]
 impl TakeoffStateHandler {
-  #[napi(constructor)]
   /// Creates a new state.
   ///
   /// # Arguments
@@ -30,6 +29,7 @@ impl TakeoffStateHandler {
   /// # Returns
   ///
   /// * `State` - The new state.
+  #[napi(constructor)]
   pub fn new(options: Option<StateOptions>) -> Self {
     let state = Self {
       pages: Arc::new(DashMap::new()),
@@ -51,6 +51,25 @@ impl TakeoffStateHandler {
       .measurements
       .iter()
       .filter(|entry| entry.value().get_group_id() == group_id)
+      .map(|entry| entry.value().clone())
+      .collect()
+  }
+
+  /// Get the measurements by page id.
+  ///
+  /// # Arguments
+  ///
+  /// * `page_id` - The id of the page.
+  ///
+  /// # Returns
+  ///
+  /// * `Vec<MeasurementWrapper>` - The measurements that are on the page.
+  #[napi]
+  pub fn get_measurements_by_page_id(&self, page_id: String) -> Vec<MeasurementWrapper> {
+    self
+      .measurements
+      .iter()
+      .filter(|entry| entry.value().page_id() == page_id)
       .map(|entry| entry.value().clone())
       .collect()
   }

@@ -98,6 +98,18 @@ export declare class TakeoffStateHandler {
 	constructor(options?: StateOptions | undefined | null);
 	getMeasurementsByGroupId(groupId: string): Array<MeasurementWrapper>;
 	/**
+	 * Get the measurements by page id.
+	 *
+	 * # Arguments
+	 *
+	 * * `page_id` - The id of the page.
+	 *
+	 * # Returns
+	 *
+	 * * `Vec<MeasurementWrapper>` - The measurements that are on the page.
+	 */
+	getMeasurementsByPageId(pageId: string): Array<MeasurementWrapper>;
+	/**
 	 * Get the scale for a measurement.
 	 *
 	 * # Arguments
