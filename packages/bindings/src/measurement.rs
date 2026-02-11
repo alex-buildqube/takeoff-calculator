@@ -46,6 +46,10 @@ impl MeasurementWrapper {
     }
   }
 
+  pub fn default(measurement: Measurement) -> Self {
+    Self::new(measurement, Arc::new(TakeoffStateHandler::default()))
+  }
+
   pub fn set_measurement(&self, measurement: Measurement) {
     *lock_mutex(self.measurement.lock(), "measurement")
       .expect("BUG: measurement mutex should not be poisoned") = measurement;
@@ -58,6 +62,7 @@ impl MeasurementWrapper {
     self.points
   }
 
+  #[napi(getter)]
   pub fn get_count(&self) -> f64 {
     1.0
   }

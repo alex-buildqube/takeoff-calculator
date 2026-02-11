@@ -1,0 +1,68 @@
+[
+	{
+		"id": "rect_100x50_2m",
+		"kind": "Rectangle",
+		"points": [{ "x": 0, "y": 0 }, { "x": 100, "y": 50 }],
+		"scale": { "pixel_distance": 100, "real_distance": 2, "unit": "Meters" },
+		"output_unit": "Meters",
+		"expected": { "area": 2.0, "length": 6.0 }
+	},
+	{
+		"id": "polyline_unit_segment_ft",
+		"kind": "Polyline",
+		"points": [{ "x": 0, "y": 0 }, { "x": 0, "y": 1 }],
+		"scale": { "pixel_distance": 1, "real_distance": 1, "unit": "Feet" },
+		"output_unit": "Feet",
+		"expected": { "length": 1.0 }
+	},
+	{
+		"id": "polygon_square_10_m",
+		"kind": "Polygon",
+		"points": [
+			{ "x": 0, "y": 0 },
+			{ "x": 10, "y": 0 },
+			{ "x": 10, "y": 10 },
+			{ "x": 0, "y": 10 }
+		],
+		"scale": { "pixel_distance": 10, "real_distance": 1, "unit": "Meters" },
+		"output_unit": "Meters",
+		"expected": { "area": 1.0, "length": 4.0 }
+	},
+	{
+		"id": "polyline_3_4_5_ft",
+		"kind": "Polyline",
+		"points": [{ "x": 0, "y": 0 }, { "x": 3, "y": 0 }, { "x": 3, "y": 4 }],
+		"scale": { "pixel_distance": 5, "real_distance": 1, "unit": "Feet" },
+		"output_unit": "Feet",
+		"expected": { "length": 1.4 }
+	},
+	{
+		"id": "rect_120x60_half_sqft",
+		"kind": "Rectangle",
+		"points": [{ "x": 0, "y": 0 }, { "x": 120, "y": 60 }],
+		"scale": { "pixel_distance": 120, "real_distance": 1, "unit": "Feet" },
+		"output_unit": "Feet",
+		"expected": { "area": 0.5, "length": 3.0 }
+	},
+	{
+		"id": "count_single",
+		"kind": "Count",
+		"points": [{ "x": 10, "y": 20 }],
+		"scale": { "pixel_distance": 1, "real_distance": 1, "unit": "Feet" },
+		"output_unit": "Feet",
+		"expected": { "count": 1 }
+	},
+	{
+		"id": "polygon_square_feet_to_meters",
+		"kind": "Polygon",
+		"points": [
+			{ "x": 0, "y": 0 },
+			{ "x": 100, "y": 0 },
+			{ "x": 100, "y": 100 },
+			{ "x": 0, "y": 100 }
+		],
+		"scale": { "pixel_distance": 100, "real_distance": 10, "unit": "Feet" },
+		"output_unit": "Meters",
+		"expected": { "area": 9.290304, "length": 12.192 }
+	}
+]

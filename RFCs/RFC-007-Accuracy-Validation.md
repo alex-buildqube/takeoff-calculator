@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-007
 - **Title**: Accuracy Validation (Golden / Baseline Tests)
+- **Status**: Completed
 
 ## Summary
 
@@ -29,11 +30,11 @@ Medium.
 
 ## Acceptance criteria
 
-- [ ] Automated tests compare core outputs to a known baseline (reference lengths/areas for given pixels + scale).
-- [ ] Baseline dataset is versioned (in repo or CI artifact).
-- [ ] Accuracy target (e.g. within 0.01% of baseline for area) is met and tested.
-- [ ] Floating-point tolerance and rounding policy are documented.
-- [ ] Golden/reference tests live in `takeoff_core`; bindings have smoke tests that exercise the same flows.
+- [x] Automated tests compare core outputs to a known baseline (reference lengths/areas for given pixels + scale).
+- [x] Baseline dataset is versioned (in repo or CI artifact).
+- [x] Accuracy target (e.g. within 0.01% of baseline for area) is met and tested.
+- [x] Floating-point tolerance and rounding policy are documented.
+- [x] Golden/reference tests live in `takeoff_core`; bindings have smoke tests that exercise the same flows.
 
 ---
 

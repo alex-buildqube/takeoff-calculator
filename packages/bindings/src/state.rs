@@ -224,9 +224,10 @@ impl TakeoffStateHandler {
 
     let res = self.measurements.insert(
       measurement.id().to_string(),
-      MeasurementWrapper::new(measurement, Arc::new(self.clone())),
+      MeasurementWrapper::new(measurement.clone(), Arc::new(self.clone())),
     );
     self.compute_measurement(&id);
+    let _ = self.compute_group(measurement.group_id());
 
     if let Some(measurement) = res {
       return Some(measurement.get_measurement());

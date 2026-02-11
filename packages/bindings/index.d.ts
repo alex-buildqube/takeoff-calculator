@@ -69,6 +69,7 @@ export declare class GroupWrapper {
 
 export declare class MeasurementWrapper {
 	get points(): number;
+	get count(): number;
 	get measurement(): Measurement;
 	get area(): UnitValue | null;
 	convertArea(unit: Unit): number | null;

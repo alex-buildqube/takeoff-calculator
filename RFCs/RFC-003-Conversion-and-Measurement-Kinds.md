@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-003
 - **Title**: Conversion and Measurement Kinds
+- **Status**: Completed
 
 ## Summary
 
@@ -33,14 +34,14 @@ High.
 
 ## Acceptance criteria
 
-- [ ] Given valid polygon coordinates and scale, API returns area within 0.01% of baseline (exact formula: Shoelace).
-- [ ] Polyline length equals sum of Euclidean segment lengths, converted via scale, in chosen unit.
-- [ ] Rectangle area = width × height in real-world unit (from pixel dimensions and scale).
-- [ ] Count returns item count as provided (no geometric conversion).
-- [ ] Each measurement kind is explicitly typed (polygon, polyline, rectangle, count).
-- [ ] Empty geometry returns `EmptyGeometry` (or equivalent); invalid scale use returns `InvalidScale`.
-- [ ] Output can be requested in any supported unit; conversion from scale unit to output unit is correct.
-- [ ] Degenerate polygons (e.g. collinear points), zero-length segments, and empty shapes are handled explicitly (error or defined value, documented).
+- [x] Given valid polygon coordinates and scale, API returns area within 0.01% of baseline (exact formula: Shoelace).
+- [x] Polyline length equals sum of Euclidean segment lengths, converted via scale, in chosen unit.
+- [x] Rectangle area = width × height in real-world unit (from pixel dimensions and scale).
+- [x] Count returns item count as provided (no geometric conversion).
+- [x] Each measurement kind is explicitly typed (polygon, polyline, rectangle, count).
+- [x] Empty geometry returns `EmptyGeometry` (or equivalent); invalid scale use returns `InvalidScale`.
+- [x] Output can be requested in any supported unit; conversion from scale unit to output unit is correct.
+- [x] Degenerate polygons (e.g. collinear points), zero-length segments, and empty shapes are handled explicitly (error or defined value, documented).
 
 ---
 

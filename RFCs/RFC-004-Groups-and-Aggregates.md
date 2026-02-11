@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-004
 - **Title**: Groups and Aggregates
+- **Status**: Completed
 
 ## Summary
 
@@ -32,14 +33,14 @@ High.
 
 ## Acceptance criteria
 
-- [ ] Developer can create groups (e.g. with a name or id) and add/remove measurements.
-- [ ] Adding or removing a measurement from a group updates that group’s totals.
-- [ ] Group aggregates: total area, total length, point count, item count—each in a single requested unit.
-- [ ] Measurements in a group may use different scales; each measurement’s contribution is converted to the requested unit before aggregation.
-- [ ] Scale is per-measurement; groups do not have a scale; totals recompute when any member’s data or scale changes.
-- [ ] Empty group returns zero for all aggregates (or defined behavior).
-- [ ] Invalid measurement references (e.g. id not found) return a typed error.
-- [ ] No stale aggregates; recomputation on change is required.
+- [x] Developer can create groups (e.g. with a name or id) and add/remove measurements.
+- [x] Adding or removing a measurement from a group updates that group’s totals.
+- [x] Group aggregates: total area, total length, point count, item count—each in a single requested unit.
+- [x] Measurements in a group may use different scales; each measurement’s contribution is converted to the requested unit before aggregation.
+- [x] Scale is per-measurement; groups do not have a scale; totals recompute when any member’s data or scale changes.
+- [x] Empty group returns zero for all aggregates (or defined behavior).
+- [x] Invalid measurement references (e.g. id not found) return a typed error.
+- [x] No stale aggregates; recomputation on change is required.
 
 ---
 

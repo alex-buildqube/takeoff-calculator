@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-005
 - **Title**: Node and WASI API Bindings
+- **Status**: Completed
 
 ## Summary
 
@@ -32,12 +33,12 @@ High.
 
 ## Acceptance criteria
 
-- [ ] Same inputs produce same outputs from NAPI and WASI bindings (consistency).
-- [ ] API supports: scales (create, list); measurements (create by kind, attach scale, get length/area/volume in unit); groups (create, add measurements, get aggregates).
-- [ ] Typed errors from RFC-001 are exposed (serializable, usable from both bindings).
-- [ ] Backend is usable by at least one consumer app (e.g. sample-app) for quantity/cost estimation.
-- [ ] No UI dependency; compatibility with Node and browser (WASI) only.
-- [ ] Publishable: npm package for bindings; optional crates.io for core. Semver for bindings.
+- [x] Same inputs produce same outputs from NAPI and WASI bindings (consistency).
+- [x] API supports: scales (create, list); measurements (create by kind, attach scale, get length/area/volume in unit); groups (create, add measurements, get aggregates).
+- [x] Typed errors from RFC-001 are exposed (serializable, usable from both bindings).
+- [x] Backend is usable by at least one consumer app (e.g. sample-app) for quantity/cost estimation.
+- [x] No UI dependency; compatibility with Node and browser (WASI) only.
+- [x] Publishable: npm package for bindings; optional crates.io for core. Semver for bindings.
 
 ---
 

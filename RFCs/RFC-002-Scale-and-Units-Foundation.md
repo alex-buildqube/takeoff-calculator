@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-002
 - **Title**: Scale and Units Foundation
+- **Status**: Completed
 
 ## Summary
 
@@ -34,13 +35,13 @@ Medium.
 
 ## Acceptance criteria
 
-- [ ] Scale can be created with ratio (e.g. pixel_distance / real_distance or 1:120) and unit (e.g. feet).
-- [ ] Multiple scales can exist in the same context (create, list).
-- [ ] User can request length/area/volume in any supported unit; conversion from scale unit to output unit is correct.
-- [ ] Supported units: imperial (yards, feet, inches) and metric (meters, centimeters) for length, area, and volume where applicable.
-- [ ] Unknown unit returns a clear typed error (RFC-001).
-- [ ] Zero ratio or invalid scale parameters return typed errors (RFC-001).
-- [ ] Unit mismatch (e.g. requesting area in a length-only context) is handled with a clear error or defined behavior.
+- [x] Scale can be created with ratio (e.g. pixel_distance / real_distance or 1:120) and unit (e.g. feet).
+- [x] Multiple scales can exist in the same context (create, list).
+- [x] User can request length/area/volume in any supported unit; conversion from scale unit to output unit is correct.
+- [x] Supported units: imperial (yards, feet, inches) and metric (meters, centimeters) for length, area, and volume where applicable.
+- [x] Unknown unit returns a clear typed error (RFC-001).
+- [x] Zero ratio or invalid scale parameters return typed errors (RFC-001).
+- [x] Unit mismatch (e.g. requesting area in a length-only context) is handled with a clear error or defined behavior.
 
 ---
 

@@ -4,6 +4,7 @@
 
 - **Identifier**: RFC-001
 - **Title**: Typed Error Handling for Invalid Inputs
+- **Status**: Completed
 
 ## Summary
 
@@ -32,12 +33,12 @@ Medium.
 
 ## Acceptance criteria
 
-- [ ] Empty geometry produces a defined error type (e.g. `EmptyGeometry`).
-- [ ] Zero or invalid scale produces a defined error (e.g. `InvalidScale`).
-- [ ] Unknown or unsupported unit produces a defined error (e.g. `UnknownUnit`).
-- [ ] Errors are serializable and usable from both Node (NAPI) and WASI bindings.
-- [ ] No silent wrong values; all invalid-input paths return typed errors.
-- [ ] Error paths are covered by tests.
+- [x] Empty geometry produces a defined error type (e.g. `EmptyGeometry`).
+- [x] Zero or invalid scale produces a defined error (e.g. `InvalidScale`).
+- [x] Unknown or unsupported unit produces a defined error (e.g. `UnknownUnit`).
+- [x] Errors are serializable and usable from both Node (NAPI) and WASI bindings.
+- [x] No silent wrong values; all invalid-input paths return typed errors.
+- [x] Error paths are covered by tests.
 
 ---
 

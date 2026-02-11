@@ -57,7 +57,7 @@
 	"scripts": {
 		"artifacts": "napi artifacts",
 		"create-npm-dirs": "napi create-npm-dirs",
-		"bench": "node --import @oxc-node/core/register benchmark/bench.ts",
+		"bench": "tsx --tsconfig tsconfig.bench.json benchmark/bench.mts",
 		"build": "napi build --platform --release",
 		"build:wasm": "napi build --platform --target wasm32-wasip1-threads --release",
 		"build:debug": "napi build --platform",
@@ -74,7 +74,6 @@
 		"@faker-js/faker": "^10.2.0",
 		"@napi-rs/cli": "^3.5.1",
 		"@napi-rs/wasm-runtime": "^1.1.0",
-		"@oxc-node/core": "^0.0.35",
 		"@taplo/cli": "^0.7.0",
 		"@tybys/wasm-util": "^0.10.0",
 		"chalk": "^5.6.2",
@@ -82,6 +81,7 @@
 		"npm-run-all2": "^8.0.4",
 		"prettier": "^3.6.2",
 		"tinybench": "^6.0.0",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.2",
 		"vitest": "^4.0.15"
 	}

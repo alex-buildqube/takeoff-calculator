@@ -132,7 +132,7 @@ impl From<NapiError> for TakeoffError {
 }
 
 impl<T> From<std::sync::PoisonError<T>> for TakeoffError {
-  fn from(error: std::sync::PoisonError<T>) -> Self {
+  fn from(_error: std::sync::PoisonError<T>) -> Self {
     TakeoffError::PoisonError {
       resource: "unknown".to_string(),
     }
