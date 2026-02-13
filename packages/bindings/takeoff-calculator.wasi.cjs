@@ -129,6 +129,7 @@ module.exports.ContourWrapper = __napiModule.exports.ContourWrapper;
 module.exports.GroupWrapper = __napiModule.exports.GroupWrapper;
 module.exports.MeasurementWrapper = __napiModule.exports.MeasurementWrapper;
 module.exports.TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
+module.exports.VolumetricUnitResult = __napiModule.exports.VolumetricUnitResult;
 module.exports.plus100 = __napiModule.exports.plus100;
 module.exports.plus200 = __napiModule.exports.plus200;
 module.exports.UnitValue = __napiModule.exports.UnitValue;

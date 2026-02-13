@@ -62,6 +62,7 @@ export const ContourWrapper = __napiModule.exports.ContourWrapper;
 export const GroupWrapper = __napiModule.exports.GroupWrapper;
 export const MeasurementWrapper = __napiModule.exports.MeasurementWrapper;
 export const TakeoffStateHandler = __napiModule.exports.TakeoffStateHandler;
+export const VolumetricUnitResult = __napiModule.exports.VolumetricUnitResult;
 export const plus100 = __napiModule.exports.plus100;
 export const plus200 = __napiModule.exports.plus200;
 export const UnitValue = __napiModule.exports.UnitValue;

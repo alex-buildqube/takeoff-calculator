@@ -185,7 +185,10 @@ impl ContourInput {
       .map(|chunk| [chunk[0] as u32, chunk[1] as u32, chunk[2] as u32])
       .collect();
 
-    Ok(SurfaceMesh { vertices, triangles })
+    Ok(SurfaceMesh {
+      vertices,
+      triangles,
+    })
   }
 
   fn get_geometry_collection(&self) -> GeometryCollection {
@@ -476,9 +479,19 @@ mod tests {
     let mesh = input.to_surface_mesh(&scale).unwrap();
     assert_eq!(mesh.vertices.len(), 5);
     assert!(!mesh.triangles.is_empty());
-    let corner_z = mesh.vertices.iter().find(|v| v.x == 0.0 && v.y == 0.0).unwrap().z;
+    let corner_z = mesh
+      .vertices
+      .iter()
+      .find(|v| v.x == 0.0 && v.y == 0.0)
+      .unwrap()
+      .z;
     assert!((corner_z - 100.0).abs() < 1e-6);
-    let center_z = mesh.vertices.iter().find(|v| (v.x - 5.0).abs() < 1e-6 && (v.y - 5.0).abs() < 1e-6).unwrap().z;
+    let center_z = mesh
+      .vertices
+      .iter()
+      .find(|v| (v.x - 5.0).abs() < 1e-6 && (v.y - 5.0).abs() < 1e-6)
+      .unwrap()
+      .z;
     assert!((center_z - 50.0).abs() < 1e-6);
   }
 
